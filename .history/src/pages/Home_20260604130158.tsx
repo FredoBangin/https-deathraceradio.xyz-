@@ -38,6 +38,7 @@ const RecentSongCard: React.FC<{ song: Song; onOpen: () => void }> = ({ song, on
       <span>
         <strong>{song.name}</strong>
         <small>{song.credited_artists || 'Juice WRLD'}</small>
+        <i><b style={{ width: '42%' }} /></i>
       </span>
       <em><Play size={16} fill="currentColor" /></em>
     </button>
@@ -133,6 +134,5 @@ export const Home: React.FC<HomeProps> = ({ onOpenAuth }) => {
 };
 
 export default Home;
-
 
 

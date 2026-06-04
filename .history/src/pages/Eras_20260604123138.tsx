@@ -71,7 +71,7 @@ export const Eras: React.FC = () => {
         <div>
           <div className="section-label">Library</div>
           <h1>Browse Vault</h1>
-          <p>Explore every era. Filter, search, and dive into the archive. </p>
+          <p>Pick a recording period, filter the archive, then open any era as a playlist.</p>
         </div>
         <div className="vault-tools">
           <label>
