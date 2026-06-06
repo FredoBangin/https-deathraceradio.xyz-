@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Play, Shuffle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Shuffle } from '../components/AppIcon';
 import { useGetSongsQuery } from '../services/juicewrldApi';
 import { TrackRow } from '../components/TrackRow';
 import { playTrack } from '../features/player/playerSlice';

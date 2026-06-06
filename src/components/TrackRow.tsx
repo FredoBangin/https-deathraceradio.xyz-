@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Heart, Download } from 'lucide-react';
+import { Play, Pause, Heart, Download } from './AppIcon';
 import type { Song, Upload } from '../types';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { playTrack, pauseTrack, resumeTrack } from '../features/player/playerSlice';
 import { toggleLike } from '../features/library/librarySlice';
 import { isAudioPath } from '../lib/audioStorage';
+import { TrackActionMenu } from './TrackActionMenu';
 
 interface TrackRowProps {
   song: Song;
@@ -45,7 +46,8 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isCurrent) {
-      isPlaying ? dispatch(pauseTrack()) : dispatch(resumeTrack());
+      if (isPlaying) dispatch(pauseTrack());
+      else dispatch(resumeTrack());
     } else {
       const q = queue ? queue.map(s => ({ song: s })) : [{ song, upload }];
       dispatch(playTrack({ track: { song, upload }, queue: q }));
@@ -192,6 +194,12 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
             <Download size={14} />
           </a>
         )}
+        <TrackActionMenu
+          song={song}
+          upload={upload}
+          visible={hovered}
+          onOpenAuth={onOpenAuth}
+        />
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `@media(max-width:768px){.row-era,.row-cat{display:none!important}}` }} />

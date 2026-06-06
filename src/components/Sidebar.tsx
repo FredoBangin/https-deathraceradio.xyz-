@@ -1,16 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Library, Heart, Upload } from 'lucide-react';
-import { useAppDispatch } from '../app/hooks';
-import { openUploadModal } from '../features/upload/uploadSlice';
+import {
+  ChevronDown,
+  Disc3,
+  Heart,
+  Home,
+  ListMusic,
+  Radio,
+} from './AppIcon';
 
 export const Sidebar: React.FC = () => {
-  const dispatch = useAppDispatch();
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('sidebar_collapsed_sections') || '{}') as Record<string, boolean>;
+    } catch {
+      return {};
+    }
+  });
 
-  const navItems = [
-    { to: '/',       label: 'Home',         icon: Home },
-    { to: '/eras',   label: 'Browse Vault', icon: Library },
-    { to: '/liked',  label: 'Liked',        icon: Heart },
+  const toggleSection = (section: string) => {
+    setCollapsedSections(previous => {
+      const next = { ...previous, [section]: !previous[section] };
+      localStorage.setItem('sidebar_collapsed_sections', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const mainNavItems = [
+    { to: '/', label: 'Home', icon: Home, end: true },
+    { to: '/radio', label: 'Radio', icon: Radio },
+  ];
+
+  const libraryNavItems = [
+    { to: '/songs', label: 'Songs', icon: ListMusic },
+    { to: '/eras', label: 'Eras', icon: Disc3 },
+    { to: '/liked', label: 'Likes', icon: Heart },
   ];
 
   return (
@@ -18,26 +42,46 @@ export const Sidebar: React.FC = () => {
       <div className="sidebar-logo-block">
         <div className="sidebar-brand-text">
           <div>deathraceradio</div>
-          <span>Archive player</span>
         </div>
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} end={to === '/'}>
-            {({ isActive }) => (
-              <span className={isActive ? 'active' : ''}>
-                <Icon size={20} />
-                <strong>{label}</strong>
-              </span>
-            )}
-          </NavLink>
-        ))}
+        <div className="sidebar-nav-section">
+          {mainNavItems.map(({ to, label, icon: Icon, end }) => (
+            <NavLink key={to} to={to} end={end}>
+              {({ isActive }) => (
+                <span className={isActive ? 'active' : ''}>
+                  <Icon size={19} />
+                  <strong>{label}</strong>
+                </span>
+              )}
+            </NavLink>
+          ))}
+        </div>
 
-        <button className="sidebar-upload-btn" onClick={() => dispatch(openUploadModal(null))}>
-          <Upload size={18} />
-          <strong>Add Audio</strong>
-        </button>
+        <div className={`sidebar-nav-section ${collapsedSections.library ? 'collapsed' : ''}`}>
+          <button
+            className="sidebar-section-header"
+            type="button"
+            onClick={() => toggleSection('library')}
+            aria-expanded={!collapsedSections.library}
+          >
+            <span>Library</span>
+            <ChevronDown size={15} className="sidebar-section-chevron" />
+          </button>
+          <div className="sidebar-section-body">
+            {libraryNavItems.map(({ to, label, icon: Icon }) => (
+              <NavLink key={to} to={to}>
+                {({ isActive }) => (
+                  <span className={isActive ? 'active' : ''}>
+                    <Icon size={19} />
+                    <strong>{label}</strong>
+                  </span>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        </div>
       </nav>
     </div>
   );

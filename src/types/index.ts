@@ -24,6 +24,8 @@ export interface Song {
   category: string;
   era: Era;
   path?: string;
+  audio_available?: boolean;
+  has_audio?: boolean;
   track_titles?: string[];
   credited_artists?: string;
   producers?: string;
@@ -75,11 +77,25 @@ export interface Like {
   song_api_id: number;
 }
 
+export interface TrackComment {
+  id: string;
+  song_api_id: number;
+  song_name: string;
+  user_id?: string;
+  author_name: string;
+  body: string;
+  comment_time_seconds?: number | null;
+  created_at: string;
+  updated_at?: string;
+  status?: string;
+}
+
 export interface UserSession {
   id: string;
   email: string;
   user_metadata?: {
     username?: string;
-    [key: string]: any;
+    display_name?: string;
+    [key: string]: unknown;
   };
 }

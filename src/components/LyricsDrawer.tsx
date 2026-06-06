@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X } from './AppIcon';
 import type { Song } from '../types';
 
 interface LyricsDrawerProps {

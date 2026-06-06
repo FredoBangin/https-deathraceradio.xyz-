@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Heart } from 'lucide-react';
+import { Play, Pause, Heart } from './AppIcon';
 import type { Song } from '../types';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { playTrack, pauseTrack, resumeTrack } from '../features/player/playerSlice';
@@ -53,7 +53,8 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isCurrent) {
-      isPlaying ? dispatch(pauseTrack()) : dispatch(resumeTrack());
+      if (isPlaying) dispatch(pauseTrack());
+      else dispatch(resumeTrack());
     } else {
       const q = queue ? queue.map(s => ({ song: s })) : [{ song }];
       dispatch(playTrack({ track: { song }, queue: q }));
@@ -66,11 +67,29 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
     dispatch(toggleLike(song.id, user.id));
   };
 
+  const openSong = () => navigate(`/song/${song.public_id || song.id}`);
+
   return (
     <div
-      onClick={() => navigate(`/song/${song.public_id || song.id}`)}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open ${song.name}`}
+      onClick={openSong}
+      onKeyDown={(event) => {
+        if (event.currentTarget !== event.target) return;
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        openSong();
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={(event) => {
+        const nextTarget = event.relatedTarget;
+        if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+          setHovered(false);
+        }
+      }}
       style={{
         cursor: 'pointer',
         borderRadius: '10px',
@@ -78,6 +97,7 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         transition: 'all 0.22s ease',
+        outline: 'none',
         boxShadow: hovered
           ? 'var(--glow-card-hover)'
           : 'var(--glow-card)',

@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UserSession } from '../../types';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import type { AppDispatch } from '../../app/store';
+import { getDemoUser, isSupabaseConfigured, saveDemoUser, supabase, toUserSession } from '../../lib/supabase';
 
 interface AuthState {
   user: UserSession | null;
@@ -11,17 +12,8 @@ interface AuthState {
 
 const getInitialUser = (): UserSession | null => {
   if (isSupabaseConfigured) return null;
-  
-  // Local demo mode: check localStorage
-  const savedUser = localStorage.getItem('demo_user');
-  if (savedUser) {
-    try {
-      return JSON.parse(savedUser);
-    } catch {
-      return null;
-    }
-  }
-  return null;
+
+  return getDemoUser();
 };
 
 const initialState: AuthState = {
@@ -29,6 +21,8 @@ const initialState: AuthState = {
   loading: false,
   initialized: false,
 };
+
+let authStateSubscription: { unsubscribe: () => void } | null = null;
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -38,11 +32,7 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.loading = false;
       state.initialized = true;
-      if (!isSupabaseConfigured && action.payload) {
-        localStorage.setItem('demo_user', JSON.stringify(action.payload));
-      } else if (!isSupabaseConfigured && !action.payload) {
-        localStorage.removeItem('demo_user');
-      }
+      if (!isSupabaseConfigured) saveDemoUser(action.payload);
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -56,33 +46,34 @@ export const authSlice = createSlice({
 export const { setUser, setLoading, setInitialized } = authSlice.actions;
 
 // Async Thunks
-export const initializeAuth = () => async (dispatch: any) => {
+export const initializeAuth = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   if (isSupabaseConfigured && supabase) {
-    // Get current session
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      dispatch(setUser({
-        id: session.user.id,
-        email: session.user.email || '',
-        user_metadata: session.user.user_metadata,
-      }));
-    } else {
-      dispatch(setUser(null));
-    }
+    try {
+      // Get current session
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
 
-    // Listen for changes
-    supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        dispatch(setUser({
-          id: session.user.id,
-          email: session.user.email || '',
-          user_metadata: session.user.user_metadata,
-        }));
+        dispatch(setUser(await toUserSession(session.user)));
       } else {
         dispatch(setUser(null));
       }
-    });
+    } catch {
+      dispatch(setUser(null));
+    }
+
+    // Listen for changes once. React StrictMode can run initialization twice in dev.
+    if (!authStateSubscription) {
+      const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          void toUserSession(session.user).then(user => dispatch(setUser(user)));
+        } else {
+          dispatch(setUser(null));
+        }
+      });
+      authStateSubscription = data.subscription;
+    }
   } else {
     // Demo mode is already loaded from localStorage via initial state
     dispatch(setInitialized(true));
@@ -90,11 +81,12 @@ export const initializeAuth = () => async (dispatch: any) => {
   }
 };
 
-export const logoutUser = () => async (dispatch: any) => {
+export const logoutUser = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   if (isSupabaseConfigured && supabase) {
     await supabase.auth.signOut();
   }
+  saveDemoUser(null);
   dispatch(setUser(null));
 };
 
