@@ -1,25 +1,25 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { juicewrldApi } from '../services/juicewrldApi';
-import { uploadsApi } from '../services/uploadsApi';
+import { commentsApi } from '../services/commentsApi';
 import playerReducer from '../features/player/playerSlice';
 import authReducer from '../features/auth/authSlice';
 import libraryReducer from '../features/library/librarySlice';
-import uploadReducer from '../features/upload/uploadSlice';
+import notificationsReducer from '../features/notifications/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
     [juicewrldApi.reducerPath]: juicewrldApi.reducer,
-    [uploadsApi.reducerPath]: uploadsApi.reducer,
+    [commentsApi.reducerPath]: commentsApi.reducer,
     player: playerReducer,
     auth: authReducer,
     library: libraryReducer,
-    upload: uploadReducer,
+    notifications: notificationsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(juicewrldApi.middleware, uploadsApi.middleware),
+    }).concat(juicewrldApi.middleware, commentsApi.middleware),
 });
 
 setupListeners(store.dispatch);

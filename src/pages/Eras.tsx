@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search } from '../components/AppIcon';
 import type { Era } from '../types';
 import { useGetErasQuery, useGetSongsQuery } from '../services/juicewrldApi';
 import { getEraDescription } from '../lib/eraDescriptions';
@@ -70,8 +70,8 @@ export const Eras: React.FC = () => {
       <div className="vault-header">
         <div>
           <div className="section-label">Library</div>
-          <h1>Browse Vault</h1>
-          <p>Explore every era. Filter, search, and dive into the archive. </p>
+          <h1>The Vault</h1>
+          <p>Entire archive of juicewrld's musical eras.</p>
         </div>
         <div className="vault-tools">
           <label>

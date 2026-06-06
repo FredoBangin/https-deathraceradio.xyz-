@@ -2,7 +2,7 @@ import React from 'react';
 import { useAppSelector } from '../app/hooks';
 import { useGetSongByIdQuery } from '../services/juicewrldApi';
 import { TrackRow } from '../components/TrackRow';
-import { Heart, Lock, Music } from 'lucide-react';
+import { Heart, Lock, Music } from '../components/AppIcon';
 
 interface LikedProps {
   onOpenAuth: () => void;

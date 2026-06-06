@@ -56,7 +56,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [displayName, setDisplayName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const passwordStatus = passwordChecks.map(check => ({ ...check, passed: check.test(password) }));
   const passwordReady = passwordStatus.every(check => check.passed);
@@ -75,12 +74,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const resetMode = (nextIsSignUp: boolean) => {
     setIsSignUp(nextIsSignUp);
     setErrorMsg(null);
-    setSuccessMsg(null);
   };
 
   const finishAuth = async (user: SupabaseUser, name?: string) => {
     if (isSupabaseConfigured && user) {
-      await upsertProfile(user, name);
+      if (name) await upsertProfile(user, name);
       dispatch(setUser(await toUserSession(user)));
     }
     onClose();
@@ -89,7 +87,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMsg(null);
-    setSuccessMsg(null);
     setLoading(true);
     setAuthRememberMe(rememberMe);
 
@@ -114,12 +111,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             },
           });
           if (error) throw error;
-          if (data.session?.user) {
-            await finishAuth(data.session.user, safeDisplayName);
-          } else if (data.user) {
-            setPassword('');
-            setSuccessMsg('Account created. Check your email to confirm it, then sign in.');
-          }
+          if (data.user) await finishAuth(data.user, safeDisplayName);
         } else {
           const { data, error } = await supabase.auth.signInWithPassword({
             email: safeEmail,
@@ -143,6 +135,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }, 500);
       }
     } catch (err: unknown) {
+      console.error(err);
       setErrorMsg(getFriendlyAuthError(err));
     } finally {
       if (isSupabaseConfigured) setLoading(false);
@@ -267,11 +260,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {successMsg && <div className="auth-success">{successMsg}</div>}
           {errorMsg && <div className="auth-error">{errorMsg}</div>}
 
           <button type="submit" disabled={loading} className="auth-submit-btn">
-            {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : isSignUp ? 'Create account' : 'Sign in'}
+            {loading ? 'Working...' : isSignUp ? 'Create account' : 'Sign in'}
           </button>
         </form>
       </section>

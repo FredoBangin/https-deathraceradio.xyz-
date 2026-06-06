@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { AppDispatch, RootState } from '../../app/store';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 interface LibraryState {
@@ -59,7 +60,7 @@ export const librarySlice = createSlice({
 export const { setLikes, addLike, removeLike, setLoading } = librarySlice.actions;
 
 // Async Thunks
-export const fetchLikes = (userId: string | undefined) => async (dispatch: any) => {
+export const fetchLikes = (userId: string | undefined) => async (dispatch: AppDispatch) => {
   if (!userId) {
     dispatch(setLikes([]));
     return;
@@ -76,7 +77,7 @@ export const fetchLikes = (userId: string | undefined) => async (dispatch: any) 
 
       if (error) throw error;
 
-      const ids = data.map((item: any) => item.song_api_id);
+      const ids = (data as Array<{ song_api_id: number }>).map(item => item.song_api_id);
       dispatch(setLikes(ids));
     } catch (err) {
       console.error('Error fetching likes:', err);
@@ -88,7 +89,10 @@ export const fetchLikes = (userId: string | undefined) => async (dispatch: any) 
   }
 };
 
-export const toggleLike = (songId: number, userId: string | undefined) => async (dispatch: any, getState: any) => {
+export const toggleLike = (songId: number, userId: string | undefined) => async (
+  dispatch: AppDispatch,
+  getState: () => RootState
+) => {
   if (!userId) {
     // If not logged in, trigger auth modal or warning.
     return;

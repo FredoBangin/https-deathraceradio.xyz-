@@ -7,6 +7,12 @@ export interface PlayerTrack {
   upload?: Upload; // If playing a community upload version, otherwise preview mode
 }
 
+interface PlayerSeekRequest {
+  id: number;
+  songId?: number;
+  time: number;
+}
+
 interface PlayerState {
   currentTrack: PlayerTrack | null;
   isPlaying: boolean;
@@ -16,9 +22,12 @@ interface PlayerState {
   duration: number;
   queue: PlayerTrack[];
   currentIndex: number;
+  playedIndexHistory: number[];
+  playedSongIds: number[];
   isShuffle: boolean;
   isRepeat: 'none' | 'one' | 'all';
   recentlyPlayedIds: number[];
+  seekRequest: PlayerSeekRequest | null;
 }
 
 const getSavedRecentlyPlayedIds = () => {
@@ -30,6 +39,43 @@ const getSavedRecentlyPlayedIds = () => {
   }
 };
 
+const rememberPlayedTrack = (state: PlayerState, track: PlayerTrack) => {
+  if (!state.playedSongIds.includes(track.song.id)) {
+    state.playedSongIds.push(track.song.id);
+  }
+
+  state.recentlyPlayedIds = [
+    track.song.id,
+    ...state.recentlyPlayedIds.filter(id => id !== track.song.id),
+  ].slice(0, 12);
+  localStorage.setItem('recently_played_song_ids', JSON.stringify(state.recentlyPlayedIds));
+};
+
+const isSameTrack = (a: PlayerTrack, b: PlayerTrack) =>
+  a.song.id === b.song.id && a.upload?.id === b.upload?.id;
+
+const getUnplayedQueueIndices = (state: PlayerState) =>
+  state.queue
+    .map((track, index) => ({ track, index }))
+    .filter(({ track, index }) => index !== state.currentIndex && !state.playedSongIds.includes(track.song.id))
+    .map(({ index }) => index);
+
+const getNextUnplayedIndex = (state: PlayerState) => {
+  if (!state.queue.length) return -1;
+
+  const unplayedIndices = getUnplayedQueueIndices(state);
+  if (!unplayedIndices.length) return -1;
+
+  if (state.isShuffle) {
+    return unplayedIndices[Math.floor(Math.random() * unplayedIndices.length)];
+  }
+
+  const nextForward = unplayedIndices.find(index => index > state.currentIndex);
+  if (typeof nextForward === 'number') return nextForward;
+
+  return state.isRepeat === 'all' ? unplayedIndices[0] : -1;
+};
+
 const initialState: PlayerState = {
   currentTrack: null,
   isPlaying: false,
@@ -39,9 +85,12 @@ const initialState: PlayerState = {
   duration: 0,
   queue: [],
   currentIndex: -1,
+  playedIndexHistory: [],
+  playedSongIds: [],
   isShuffle: false,
   isRepeat: 'none',
   recentlyPlayedIds: getSavedRecentlyPlayedIds(),
+  seekRequest: null,
 };
 
 export const playerSlice = createSlice({
@@ -52,11 +101,9 @@ export const playerSlice = createSlice({
       state.currentTrack = action.payload.track;
       state.isPlaying = true;
       state.progress = 0;
-      state.recentlyPlayedIds = [
-        action.payload.track.song.id,
-        ...state.recentlyPlayedIds.filter(id => id !== action.payload.track.song.id),
-      ].slice(0, 12);
-      localStorage.setItem('recently_played_song_ids', JSON.stringify(state.recentlyPlayedIds));
+      state.playedIndexHistory = [];
+      state.playedSongIds = [];
+      rememberPlayedTrack(state, action.payload.track);
       
       if (action.payload.queue) {
         state.queue = action.payload.queue;
@@ -97,11 +144,26 @@ export const playerSlice = createSlice({
     setProgress: (state, action: PayloadAction<number>) => {
       state.progress = action.payload;
     },
+    seekToTime: (state, action: PayloadAction<number | { time: number; songId?: number }>) => {
+      const payload = typeof action.payload === 'number'
+        ? { time: action.payload }
+        : action.payload;
+      const nextTime = Math.max(0, payload.time);
+      state.progress = nextTime;
+      state.seekRequest = {
+        id: (state.seekRequest?.id || 0) + 1,
+        songId: payload.songId,
+        time: nextTime,
+      };
+    },
     setDuration: (state, action: PayloadAction<number>) => {
       state.duration = action.payload;
     },
     toggleShuffle: (state) => {
       state.isShuffle = !state.isShuffle;
+    },
+    setShuffle: (state, action: PayloadAction<boolean>) => {
+      state.isShuffle = action.payload;
     },
     toggleRepeat: (state) => {
       const modes: ('none' | 'one' | 'all')[] = ['none', 'all', 'one'];
@@ -116,33 +178,30 @@ export const playerSlice = createSlice({
         return;
       }
 
-      let nextIndex = state.currentIndex + 1;
+      const nextIndex = getNextUnplayedIndex(state);
 
-      if (state.isShuffle) {
-        nextIndex = Math.floor(Math.random() * state.queue.length);
-      } else if (nextIndex >= state.queue.length) {
-        if (state.isRepeat === 'all') {
-          nextIndex = 0;
-        } else {
-          state.isPlaying = false;
-          state.progress = 0;
-          return;
-        }
+      if (nextIndex === -1) {
+        state.isPlaying = false;
+        state.progress = 0;
+        return;
       }
 
+      if (state.currentIndex >= 0 && nextIndex !== state.currentIndex) {
+        state.playedIndexHistory = [...state.playedIndexHistory, state.currentIndex].slice(-50);
+      }
       state.currentIndex = nextIndex;
       state.currentTrack = state.queue[nextIndex];
       state.progress = 0;
       state.isPlaying = true;
+      rememberPlayedTrack(state, state.currentTrack);
     },
     prevTrack: (state) => {
       if (state.queue.length === 0) return;
 
-      let prevIndex = state.currentIndex - 1;
+      const historyIndex = state.playedIndexHistory.pop();
+      let prevIndex = typeof historyIndex === 'number' ? historyIndex : state.currentIndex - 1;
 
-      if (state.isShuffle) {
-        prevIndex = Math.floor(Math.random() * state.queue.length);
-      } else if (prevIndex < 0) {
+      if (prevIndex < 0) {
         if (state.isRepeat === 'all') {
           prevIndex = state.queue.length - 1;
         } else {
@@ -155,6 +214,105 @@ export const playerSlice = createSlice({
       state.currentTrack = state.queue[prevIndex];
       state.progress = 0;
       state.isPlaying = true;
+      rememberPlayedTrack(state, state.currentTrack);
+    },
+    playQueueIndex: (state, action: PayloadAction<number>) => {
+      const nextIndex = action.payload;
+      if (nextIndex < 0 || nextIndex >= state.queue.length) return;
+
+      if (state.currentIndex >= 0 && nextIndex !== state.currentIndex) {
+        state.playedIndexHistory = [...state.playedIndexHistory, state.currentIndex].slice(-50);
+      }
+
+      state.currentIndex = nextIndex;
+      state.currentTrack = state.queue[nextIndex];
+      state.progress = 0;
+      state.isPlaying = true;
+      rememberPlayedTrack(state, state.currentTrack);
+    },
+    playNext: (state, action: PayloadAction<PlayerTrack>) => {
+      const track = action.payload;
+
+      if (!state.currentTrack) {
+        state.queue = [track];
+        state.currentTrack = track;
+        state.currentIndex = 0;
+        state.progress = 0;
+        state.isPlaying = true;
+        rememberPlayedTrack(state, track);
+        return;
+      }
+
+      if (isSameTrack(track, state.currentTrack)) return;
+
+      const existingIndex = state.queue.findIndex(item => isSameTrack(item, track));
+      if (existingIndex !== -1) {
+        state.queue.splice(existingIndex, 1);
+        if (existingIndex < state.currentIndex) state.currentIndex -= 1;
+      }
+
+      state.queue.splice(state.currentIndex + 1, 0, track);
+    },
+    playLater: (state, action: PayloadAction<PlayerTrack>) => {
+      const track = action.payload;
+      if (state.currentTrack && isSameTrack(track, state.currentTrack)) return;
+
+      const existingIndex = state.queue.findIndex(item => isSameTrack(item, track));
+      if (existingIndex !== -1) {
+        state.queue.splice(existingIndex, 1);
+        if (existingIndex < state.currentIndex) state.currentIndex -= 1;
+      }
+
+      state.queue.push(track);
+      if (!state.currentTrack) {
+        state.currentTrack = track;
+        state.currentIndex = 0;
+      }
+    },
+    removeFromQueue: (state, action: PayloadAction<number>) => {
+      const removeIndex = action.payload;
+      if (removeIndex < 0 || removeIndex >= state.queue.length) return;
+
+      if (removeIndex === state.currentIndex) {
+        state.queue.splice(removeIndex, 1);
+        if (!state.queue.length) {
+          state.currentTrack = null;
+          state.currentIndex = -1;
+          state.progress = 0;
+          state.isPlaying = false;
+          state.playedIndexHistory = [];
+          return;
+        }
+
+        const nextIndex = Math.min(removeIndex, state.queue.length - 1);
+        state.currentIndex = nextIndex;
+        state.currentTrack = state.queue[nextIndex];
+        state.progress = 0;
+        rememberPlayedTrack(state, state.currentTrack);
+        return;
+      }
+
+      state.queue.splice(removeIndex, 1);
+      if (removeIndex < state.currentIndex) state.currentIndex -= 1;
+      state.playedIndexHistory = state.playedIndexHistory
+        .filter(index => index !== removeIndex)
+        .map(index => index > removeIndex ? index - 1 : index);
+    },
+    moveQueueItemToTop: (state, action: PayloadAction<number>) => {
+      const itemIndex = action.payload;
+      if (itemIndex < 0 || itemIndex >= state.queue.length || itemIndex === state.currentIndex) return;
+
+      const [item] = state.queue.splice(itemIndex, 1);
+      if (itemIndex < state.currentIndex) state.currentIndex -= 1;
+      state.queue.splice(Math.min(state.queue.length, state.currentIndex + 1), 0, item);
+    },
+    moveQueueItemToEnd: (state, action: PayloadAction<number>) => {
+      const itemIndex = action.payload;
+      if (itemIndex < 0 || itemIndex >= state.queue.length || itemIndex === state.currentIndex) return;
+
+      const [item] = state.queue.splice(itemIndex, 1);
+      if (itemIndex < state.currentIndex) state.currentIndex -= 1;
+      state.queue.push(item);
     },
     addToQueue: (state, action: PayloadAction<PlayerTrack>) => {
       // Check if already in queue
@@ -173,6 +331,8 @@ export const playerSlice = createSlice({
     clearQueue: (state) => {
       state.queue = [];
       state.currentIndex = -1;
+      state.playedIndexHistory = [];
+      state.playedSongIds = [];
       state.currentTrack = null;
       state.isPlaying = false;
       state.progress = 0;
@@ -187,11 +347,19 @@ export const {
   setVolume,
   toggleMute,
   setProgress,
+  seekToTime,
   setDuration,
   toggleShuffle,
+  setShuffle,
   toggleRepeat,
   nextTrack,
   prevTrack,
+  playQueueIndex,
+  playNext,
+  playLater,
+  removeFromQueue,
+  moveQueueItemToTop,
+  moveQueueItemToEnd,
   addToQueue,
   clearQueue
 } = playerSlice.actions;

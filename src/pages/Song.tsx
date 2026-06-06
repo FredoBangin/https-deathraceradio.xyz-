@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetSongByIdQuery } from '../services/juicewrldApi';
-import { useGetUploadsBySongIdQuery } from '../services/uploadsApi';
-import { AudioVersions } from '../components/AudioVersions';
+import { TrackComments } from '../components/TrackComments';
 import { LyricsDrawer } from '../components/LyricsDrawer';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { playTrack } from '../features/player/playerSlice';
 import { toggleLike } from '../features/library/librarySlice';
-import { openUploadModal } from '../features/upload/uploadSlice';
-import { Play, Heart, FileText, ArrowLeft, Calendar, Disc, MapPin, Key, Radio, Music } from 'lucide-react';
+import { Play, Heart, FileText, ArrowLeft, Calendar, Disc, MapPin, Key, Radio, Music } from '../components/AppIcon';
 import { isAudioPath } from '../lib/audioStorage';
 
 interface SongPageProps {
@@ -34,16 +32,13 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
   const { likedSongIds } = useAppSelector((state) => state.library);
 
   const { data: song, isLoading: songLoading, error: songError } = useGetSongByIdQuery(id || '');
-  const { data: uploads, isLoading: uploadsLoading } = useGetUploadsBySongIdQuery(song?.id || 0, { skip: !song });
 
   const isLiked = song ? likedSongIds.includes(song.id) : false;
-  const hasUploadAudio = Boolean(uploads?.[0]?.audio_url);
   const hasApiAudio = isAudioPath(song?.path);
-  const hasAnyAudio = hasUploadAudio || hasApiAudio;
 
   const handlePlayDefault = () => {
     if (!song) return;
-    dispatch(playTrack({ track: { song, upload: uploads?.[0] } }));
+    dispatch(playTrack({ track: { song } }));
   };
 
   const handleLike = () => {
@@ -144,7 +139,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
               onClick={handlePlayDefault}
               className="btn btn-primary"
               style={{ width: '100%', justifyContent: 'center' }}
-              title={!hasAnyAudio ? 'No audio path found yet' : undefined}
+              title={!hasApiAudio ? 'No audio path found yet' : undefined}
             >
               <Play size={15} fill="#fff" />
               Play
@@ -198,7 +193,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
           )}
 
           {/* No audio notice */}
-          {!hasUploadAudio && !hasApiAudio && !uploadsLoading && (
+          {!hasApiAudio && (
             <div style={{
               padding: '12px 16px',
               background: 'var(--accent-light)',
@@ -212,7 +207,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
               gap: '8px',
             }}>
               <Music size={14} />
-              No audio path is available for this track yet. Add audio only for new or community-added songs.
+              No audio path is available for this track yet.
             </div>
           )}
 
@@ -251,13 +246,8 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
       {/* Divider */}
       <div className="divider" />
 
-      {/* Audio Versions */}
-      <AudioVersions
-        song={song}
-        uploads={uploads}
-        isLoading={uploadsLoading}
-        onOpenUpload={() => dispatch(openUploadModal(song.id))}
-      />
+      {/* Comments */}
+      <TrackComments song={song} onOpenAuth={onOpenAuth} />
 
       {/* Lyrics Drawer */}
       <LyricsDrawer isOpen={lyricsOpen} onClose={() => setLyricsOpen(false)} song={song} />

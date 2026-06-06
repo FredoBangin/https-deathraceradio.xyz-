@@ -48,6 +48,7 @@ export const juicewrldApi = createApi({
         category?: string;
         era?: string;
         search?: string;
+        ordering?: string;
       }
     >({
       query: (params) => {
@@ -57,6 +58,7 @@ export const juicewrldApi = createApi({
         if (params.category) queryParams.append('category', params.category);
         if (params.era) queryParams.append('era', params.era);
         if (params.search) queryParams.append('search', params.search);
+        if (params.ordering) queryParams.append('ordering', params.ordering);
         
         return `songs/?${queryParams.toString()}`;
       },
