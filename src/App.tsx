@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { initializeAuth } from './features/auth/authSlice';
 import { fetchLikes } from './features/library/librarySlice';
@@ -77,6 +78,9 @@ export const App: React.FC = () => {
       
       {/* Modals */}
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </BrowserRouter>
   );
 };
