@@ -17,6 +17,7 @@ dist-ssr
 .history/
 .agents/
 skills-lock.json
+supabase_auth_security_checklist.md
 
 # Editor directories and files
 .vscode/*
@@ -28,3 +29,5 @@ skills-lock.json
 *.njsproj
 *.sln
 *.sw?
+.vercel
+.env*
