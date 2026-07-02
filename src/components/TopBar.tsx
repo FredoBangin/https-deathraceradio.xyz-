@@ -1,13 +1,10 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, LogOut, Shield, Music, Bell, Heart } from './AppIcon';
+import { Search, LogOut, Shield, Music, Heart } from './AppIcon';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { logoutUser } from '../features/auth/authSlice';
-import { markAllNotificationsRead, markNotificationRead } from '../features/notifications/notificationsSlice';
 import { getDisplayNameFromUser, isSupabaseConfigured } from '../lib/supabase';
 import { useGetSongsQuery } from '../services/juicewrldApi';
-import { devUpdateNotifications } from '../data/devUpdates';
 import type { Song } from '../types';
 
 interface TopBarProps { onOpenAuth: () => void; }
@@ -16,14 +13,10 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenAuth }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-  const notificationButtonRef = useRef<HTMLButtonElement | null>(null);
-  const notificationPanelRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAppSelector(s => s.auth);
   const likedCount = useAppSelector(s => s.library.likedSongIds.length);
-  const readNotificationIds = useAppSelector(s => s.notifications.readIds);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [focused, setFocused] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const trimmedQuery = searchQuery.trim();
   const { data: suggestionData, isFetching: suggestionsLoading } = useGetSongsQuery(
     { search: trimmedQuery, page_size: 6 },
@@ -32,34 +25,8 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenAuth }) => {
   const suggestions = suggestionData?.results || [];
   const showSuggestions = focused && trimmedQuery.length >= 2;
   const displayName = getDisplayNameFromUser(user);
-  const notifications = useMemo(() => devUpdateNotifications.map(notification => ({
-    ...notification,
-    read: readNotificationIds.includes(notification.id),
-  })), [readNotificationIds]);
-  const unreadCount = notifications.filter(notification => !notification.read).length;
 
   useEffect(() => { setSearchQuery(searchParams.get('search') || ''); }, [searchParams]);
-
-  useEffect(() => {
-    if (!notificationsOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (notificationButtonRef.current?.contains(target) || notificationPanelRef.current?.contains(target)) return;
-      setNotificationsOpen(false);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setNotificationsOpen(false);
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [notificationsOpen]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,70 +111,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenAuth }) => {
       </form>
 
       <div className="topbar-actions">
-        <div className="notification-center-shell">
-          <button
-            ref={notificationButtonRef}
-            className={`topbar-icon-btn notification-bell-btn ${unreadCount > 0 ? 'has-unread' : ''}`}
-            title="Notifications"
-            aria-haspopup="dialog"
-            aria-expanded={notificationsOpen}
-            onClick={() => setNotificationsOpen(open => !open)}
-            type="button"
-          >
-            <Bell size={19} />
-            {unreadCount > 0 && <span className="notification-count">{unreadCount > 9 ? '9+' : unreadCount}</span>}
-          </button>
-
-          {notificationsOpen && (
-            <div
-              ref={notificationPanelRef}
-              className="notification-panel"
-              role="dialog"
-              aria-label="Notifications"
-              onWheel={(event) => event.stopPropagation()}
-              onTouchMove={(event) => event.stopPropagation()}
-            >
-              <header>
-                <div>
-                  <span>Notifications</span>
-                  <strong>Dev updates</strong>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => dispatch(markAllNotificationsRead(notifications.map(notification => notification.id)))}
-                  disabled={unreadCount === 0}
-                >
-                  Mark all read
-                </button>
-              </header>
-
-              <div className="notification-list">
-                {notifications.map(notification => (
-                  <button
-                    key={notification.id}
-                    type="button"
-                    className={`notification-item ${notification.read ? 'read' : 'unread'}`}
-                    onClick={() => dispatch(markNotificationRead(notification.id))}
-                  >
-                    <span className="notification-dot" aria-hidden="true" />
-                    <span className="notification-copy">
-                      <span className="notification-tag">{notification.tag}</span>
-                      <strong>{notification.title}</strong>
-                      <small>{notification.body}</small>
-                      <time dateTime={notification.date}>
-                        {new Date(`${notification.date}T00:00:00`).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </time>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
         <button className="topbar-liked-btn" title="Liked tracks" onClick={() => navigate('/liked')}>
           <Heart size={18} />
           <span>{likedCount}</span>

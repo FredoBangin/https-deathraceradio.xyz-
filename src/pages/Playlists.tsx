@@ -19,7 +19,7 @@ const PLAYLISTS: Playlist[] = [
     id: 'top-unreleased',
     name: 'Top Unreleased',
     description: 'The most-played unreleased tracks in the archive.',
-    accent: '#ff5500',
+    accent: '#c1272d',
     params: { category: 'unreleased' },
   },
   {
@@ -32,46 +32,19 @@ const PLAYLISTS: Playlist[] = [
   {
     id: 'recording-sessions',
     name: 'Session Recordings',
-    description: 'Raw session footage, freestyle recordings, and studio fragments.',
+    description: 'Raw studio sessions, freestyles, and voice memo recordings.',
     accent: '#0891b2',
     params: { category: 'recording_session' },
   },
   {
-    id: 'gb-gr-era',
-    name: 'Goodbye & Good Riddance',
-    description: 'Tracks tied to the GB&GR era — the debut album and its surrounding sessions.',
-    accent: '#16a34a',
-    params: { era: 'gb&gr' },
-  },
-  {
-    id: 'drfl-era',
-    name: 'Death Race for Love',
-    description: 'The sophomore album era — high-energy records and session leaks.',
-    accent: '#dc2626',
-    params: { era: 'drfl' },
-  },
-  {
-    id: 'fd-era',
-    name: 'Fighting Demons',
-    description: 'Posthumous material from the Fighting Demons era and surrounding vaults.',
-    accent: '#9333ea',
-    params: { era: 'fd' },
-  },
-  {
-    id: 'lnd-era',
-    name: 'Legends Never Die',
-    description: 'The first posthumous album era and its related session material.',
-    accent: '#b45309',
-    params: { era: 'lnd' },
-  },
-  {
-    id: 'out-era',
-    name: 'Outsiders Era',
-    description: 'One of the most prolific archive periods with deep vault material.',
-    accent: '#0f766e',
-    params: { era: 'out' },
+    id: 'unsurfaced',
+    name: 'Unsurfaced',
+    description: 'Known to exist but no audio has circulated yet.',
+    accent: '#6b7280',
+    params: { category: 'unsurfaced' },
   },
 ];
+
 
 const buildBrowseUrl = (params: Playlist['params']) => {
   const query = new URLSearchParams();
