@@ -74,17 +74,16 @@ export const useRadioStation = () => {
 
   const queueSongs = (songs: Song[]) => {
     const uniqueSongs = uniqueSongsById(songs);
-    const shuffledSongs = shuffleSongs(uniqueSongs);
     setPlayableCount(uniqueSongs.length);
 
-    if (!shuffledSongs.length) {
+    if (!uniqueSongs.length) {
       setError('No playable tracks were found in the API catalog.');
       return;
     }
 
     dispatch(playTrack({
-      track: { song: shuffledSongs[0] },
-      queue: shuffledSongs.map(song => ({ song })),
+      track: { song: uniqueSongs[0] },
+      queue: uniqueSongs.map(song => ({ song })),
     }));
   };
 
