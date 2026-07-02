@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# Death Race Radio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Juice WRLD music catalog and player. Browse the full discography — released albums, unreleased tracks, unsurfaced recordings, and recording sessions — all organized by era.
 
-Currently, two official plugins are available:
+**Live at [deathraceradio.xyz](https://deathraceradio.xyz)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Browse and search the full Juice WRLD catalog
+- Filter by era and category (Released, Unreleased, Unsurfaced, Recording Sessions)
+- Audio playback with queue support
+- Synced lyrics
+- Like and save tracks
+- Comments on songs
+- Radio mode
 
-## Expanding the ESLint configuration
+## Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19 + TypeScript
+- Vite + Tailwind CSS v4
+- Redux Toolkit (state management + API layer)
+- React Router v7
+- Supabase (auth, likes, comments)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Data
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+All song data and audio is served by [juicewrldapi.com](https://juicewrldapi.com).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Running Locally
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+To enable auth, likes, and comments, create a `.env` file:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
+Without these the app still runs, it falls back to a local demo mode using browser storage.
+
+## Deploying
+
+The project is configured for both [GitHub Pages](.github/workflows/deploy.yml) and [Vercel](vercel.json).
+
+**GitHub Pages:** Add your Supabase credentials as repository secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`), then push to `main`. The workflow handles the rest.
+
+**Vercel:** Import the repo and set the same two environment variables in the project settings.
+
+## Contributing
+
+Pull requests are welcome. For larger changes, open an issue first to discuss what you'd like to change.
+
+## License
+
+[MIT](LICENSE)

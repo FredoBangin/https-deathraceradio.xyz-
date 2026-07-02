@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.superpowers/
+.codex-*.png
 
 # Editor directories and files
 .vscode/*
