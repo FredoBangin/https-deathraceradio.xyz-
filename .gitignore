@@ -14,6 +14,9 @@ dist-ssr
 .env
 .superpowers/
 .codex-*.png
+.history/
+.agents/
+skills-lock.json
 
 # Editor directories and files
 .vscode/*
