@@ -3,8 +3,10 @@ import { NavLink } from 'react-router-dom';
 import {
   ChevronDown,
   Disc3,
+  FileText,
   Heart,
   Home,
+  Info,
   ListMusic,
   Radio,
 } from './AppIcon';
@@ -35,6 +37,11 @@ export const Sidebar: React.FC = () => {
     { to: '/songs', label: 'Songs', icon: ListMusic },
     { to: '/eras', label: 'Eras', icon: Disc3 },
     { to: '/liked', label: 'Likes', icon: Heart },
+  ];
+
+  const infoNavItems = [
+    { to: '/about', label: 'About', icon: Info },
+    { to: '/updates', label: 'Updates', icon: FileText },
   ];
 
   return (
@@ -71,6 +78,30 @@ export const Sidebar: React.FC = () => {
           </button>
           <div className="sidebar-section-body">
             {libraryNavItems.map(({ to, label, icon: Icon }) => (
+              <NavLink key={to} to={to}>
+                {({ isActive }) => (
+                  <span className={isActive ? 'active' : ''}>
+                    <Icon size={19} />
+                    <strong>{label}</strong>
+                  </span>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+
+        <div className={`sidebar-nav-section ${collapsedSections.info ? 'collapsed' : ''}`}>
+          <button
+            className="sidebar-section-header"
+            type="button"
+            onClick={() => toggleSection('info')}
+            aria-expanded={!collapsedSections.info}
+          >
+            <span>Info</span>
+            <ChevronDown size={15} className="sidebar-section-chevron" />
+          </button>
+          <div className="sidebar-section-body">
+            {infoNavItems.map(({ to, label, icon: Icon }) => (
               <NavLink key={to} to={to}>
                 {({ isActive }) => (
                   <span className={isActive ? 'active' : ''}>

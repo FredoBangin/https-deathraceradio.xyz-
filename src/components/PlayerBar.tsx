@@ -25,6 +25,7 @@ import { playQueueIndex, setShuffle } from '../features/player/playerSlice';
 import { toggleLike } from '../features/library/librarySlice';
 import { useRadioStation } from '../hooks/useRadioStation';
 import { TrackActionMenu } from './TrackActionMenu';
+import { useToast } from './Toast';
 import {
   getApiAudioUrl,
   getSongsStoragePathFromUrl,
@@ -67,6 +68,8 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   const progressDraggingRef = useRef(false);
   const volumeDraggingRef = useRef(false);
   const pendingVolumeRef = useRef<number | null>(null);
+  const { showToast } = useToast();
+
   const {
     error: radioError,
     isLoadingPool,
@@ -545,6 +548,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
           if (!audioUrl) return;
           setLoadError(true);
           setAudioSource('none');
+          showToast('Track unavailable — try again later.', 'error');
           if (radioMode && queue.length > 1) {
             dispatch(nextTrack());
             return;
