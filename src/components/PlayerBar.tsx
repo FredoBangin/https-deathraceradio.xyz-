@@ -126,7 +126,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   const lyricDisplayLines = useMemo(() => getLyricLinesForSong(song), [song]);
   const lyricsAreSynced = useMemo(() => hasSyncedLyricLines(lyricDisplayLines), [lyricDisplayLines]);
   const stationButtonLabel = isLoadingPool ? 'Building Station' : 'Start Radio';
-  const showRightRail = rightRailMode !== null;
+  const showRightRail = radioMode && rightRailMode;
 
   useEffect(() => {
     let cancelled = false;
@@ -559,24 +559,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
             <div>
               <div className="right-player-label">Now playing</div>
             </div>
-            <div className="queue-view-toggle" aria-label="Player side panel">
-              <button
-                type="button"
-                className={rightRailMode === 'queue' ? 'active' : ''}
-                onClick={() => setRightRailMode(rightRailMode === 'queue' ? null : 'queue')}
-                title={rightRailMode === 'queue' ? 'Hide queue' : 'Show queue'}
-              >
-                <ListMusic size={17} />
-              </button>
-              <button
-                type="button"
-                className={rightRailMode === 'lyrics' ? 'active' : ''}
-                onClick={() => setRightRailMode(rightRailMode === 'lyrics' ? null : 'lyrics')}
-                title={rightRailMode === 'lyrics' ? 'Hide lyrics' : 'Show lyrics'}
-              >
-                <MessageSquare size={17} />
-              </button>
-            </div>
           </div>
         )}
 
@@ -733,7 +715,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         </div>
       )}
 
-      {rightRailMode && (
+      {radioMode && rightRailMode && (
       <div className={`queue-card custom-scroll ${motionSurface}${radioMode ? ` ${radioEnter}` : ''}`}>
         <div className="queue-card-header">
           <span>{rightRailMode === 'lyrics' ? 'Lyrics' : 'Up next'}</span>
