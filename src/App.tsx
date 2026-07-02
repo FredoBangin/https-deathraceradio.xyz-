@@ -26,6 +26,7 @@ const Updates = lazy(() => import('./pages/Updates').then(module => ({ default: 
 const Privacy = lazy(() => import('./pages/Privacy').then(module => ({ default: module.Privacy })));
 const Terms = lazy(() => import('./pages/Terms').then(module => ({ default: module.Terms })));
 const DMCA = lazy(() => import('./pages/DMCA').then(module => ({ default: module.DMCA })));
+const Playlists = lazy(() => import('./pages/Playlists').then(module => ({ default: module.Playlists })));
 
 // Layout Wrapper
 const AppLayout: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
@@ -60,6 +61,7 @@ const AppLayout: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/dmca" element={<DMCA />} />
+            <Route path="/playlists" element={<Playlists onOpenAuth={onOpenAuth} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

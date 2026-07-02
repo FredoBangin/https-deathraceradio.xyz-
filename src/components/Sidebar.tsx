@@ -9,6 +9,7 @@ import {
   Info,
   ListMusic,
   Radio,
+  Star,
 } from './AppIcon';
 
 export const Sidebar: React.FC = () => {
@@ -36,6 +37,7 @@ export const Sidebar: React.FC = () => {
   const libraryNavItems = [
     { to: '/songs', label: 'Songs', icon: ListMusic },
     { to: '/eras', label: 'Eras', icon: Disc3 },
+    { to: '/playlists', label: 'Playlists', icon: Star },
     { to: '/liked', label: 'Likes', icon: Heart },
   ];
 

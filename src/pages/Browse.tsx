@@ -26,32 +26,37 @@ export const Browse: React.FC<BrowseProps> = ({ onOpenAuth }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const selectedEra = searchParams.get('era') || '';
   const searchQuery = searchParams.get('search') || '';
+  const selectedCategory = searchParams.get('category') || '';
   const isEraPlaylist = Boolean(selectedEra);
+  const isCategoryView = Boolean(selectedCategory) && !isEraPlaylist;
   const isSearchResults = Boolean(searchQuery.trim());
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedEra, searchQuery]);
+  }, [selectedEra, searchQuery, selectedCategory]);
 
   const pageSize = isEraPlaylist ? 30 : 20;
   const { data, isLoading, isFetching } = useGetSongsQuery({
     page: currentPage,
     page_size: pageSize,
     era: selectedEra || undefined,
+    category: selectedCategory || undefined,
     search: searchQuery || undefined,
-  }, { skip: !isEraPlaylist && !isSearchResults });
+  }, { skip: !isEraPlaylist && !isSearchResults && !isCategoryView });
 
-  if (!isEraPlaylist && !isSearchResults) {
+  if (!isEraPlaylist && !isSearchResults && !isCategoryView) {
     return <Navigate to="/eras" replace />;
   }
 
   const songs = data?.results || [];
   const totalPages = data ? Math.ceil(data.count / pageSize) : 1;
   const coverImage = getImageUrl(songs.find(song => song.image_url)?.image_url);
-  const pageTitle = isEraPlaylist ? selectedEra : `Search: ${searchQuery}`;
+  const pageTitle = isEraPlaylist ? selectedEra : isCategoryView ? selectedCategory.replace('_', ' ') : `Search: ${searchQuery}`;
   const pageDescription = isEraPlaylist
     ? getEraDescription(selectedEra)
-    : `Tracks matching "${searchQuery}" from the Juice WRLD API catalog.`;
+    : isCategoryView
+      ? `${selectedCategory.replace('_', ' ')} tracks from the Juice WRLD archive.`
+      : `Tracks matching "${searchQuery}" from the Juice WRLD API catalog.`;
 
   const playSongs = (shuffle = false) => {
     if (!songs.length) return;

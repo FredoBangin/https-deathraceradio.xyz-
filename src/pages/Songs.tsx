@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Play, Shuffle } from '../components/AppIcon';
-import { useGetSongsQuery } from '../services/juicewrldApi';
+import { useGetErasQuery, useGetSongsQuery } from '../services/juicewrldApi';
 import { TrackRow } from '../components/TrackRow';
+import { CategoryTabs } from '../components/CategoryTabs';
 import { playTrack } from '../features/player/playerSlice';
 import { useAppDispatch } from '../app/hooks';
 
@@ -16,10 +17,25 @@ const RowSkeleton = () => <div className="track-row-skeleton" />;
 export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(1);
+  const [category, setCategory] = useState('');
+  const [era, setEra] = useState('');
+
+  const { data: eraData } = useGetErasQuery({ page_size: 50 });
+  const eras = eraData?.results || [];
 
   const { data, isLoading, isFetching } = useGetSongsQuery(
-    { page: currentPage, page_size: PAGE_SIZE }
+    { page: currentPage, page_size: PAGE_SIZE, category: category || undefined, era: era || undefined }
   );
+
+  const handleCategoryChange = (next: string) => {
+    setCategory(next);
+    setCurrentPage(1);
+  };
+
+  const handleEraChange = (next: string) => {
+    setEra(next);
+    setCurrentPage(1);
+  };
 
   const songs = data?.results || [];
   const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 1;
@@ -41,7 +57,7 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
         <div>
           <div className="section-label">Library</div>
           <h1>Songs</h1>
-          <p>Every track in the archive, paged for quick scanning.</p>
+          <p>{totalCount ? `${totalCount.toLocaleString()} tracks` : 'Every track in the archive.'}</p>
         </div>
         <div className="playlist-actions">
           <button onClick={() => playSongs(false)} disabled={!songs.length} className="btn btn-primary">
@@ -51,6 +67,20 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
             <Shuffle size={15} /> Shuffle
           </button>
         </div>
+      </div>
+
+      <div className="songs-filters">
+        <CategoryTabs activeTab={category} onTabChange={handleCategoryChange} />
+        <select
+          className="songs-era-select"
+          value={era}
+          onChange={e => handleEraChange(e.target.value)}
+        >
+          <option value="">All eras</option>
+          {eras.map(e => (
+            <option key={e.id} value={e.name}>{e.name}</option>
+          ))}
+        </select>
       </div>
 
       {loading ? (
@@ -79,7 +109,7 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
       ) : (
         <div className="empty-state">
           <strong>No tracks found</strong>
-          <span>The API did not return any songs for this page.</span>
+          <span>Try a different category or era.</span>
         </div>
       )}
 
