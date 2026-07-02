@@ -1069,18 +1069,153 @@ h1, h2, h3, h4, h5, h6 {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Songs page filters ── */
-.songs-filters {
+/* ── Songs page ── */
+.songs-page-header {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
-.songs-era-select {
-  margin-left: auto;
-  min-width: 140px;
+.songs-page-header h1 {
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: -0.05em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.songs-page-header p {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.songs-page-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.songs-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+/* ── Category tabs ── */
+.category-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.category-tab {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  color: var(--text-secondary);
+}
+
+.category-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Era dropdown ── */
+.era-dropdown {
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: -1px;
+}
+
+.era-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.era-dropdown-trigger:hover,
+.era-dropdown-trigger.open {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.era-dropdown-chevron {
+  transition: transform 180ms ease;
+  flex-shrink: 0;
+}
+
+.era-dropdown-chevron.flipped {
+  transform: rotate(180deg);
+}
+
+.era-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 200;
+  min-width: 160px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+
+.era-dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.era-dropdown-item:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.era-dropdown-item.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  font-weight: 600;
 }
 
 /* ── Playlists page ── */

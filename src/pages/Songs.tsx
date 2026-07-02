@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Play, Shuffle } from '../components/AppIcon';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, ChevronDown, Play, Shuffle } from '../components/AppIcon';
 import { useGetErasQuery, useGetSongsQuery } from '../services/juicewrldApi';
 import { TrackRow } from '../components/TrackRow';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { playTrack } from '../features/player/playerSlice';
 import { useAppDispatch } from '../app/hooks';
+import type { Era } from '../types';
 
 interface SongsProps {
   onOpenAuth: () => void;
@@ -13,6 +14,66 @@ interface SongsProps {
 const PAGE_SIZE = 15;
 
 const RowSkeleton = () => <div className="track-row-skeleton" />;
+
+const EraDropdown: React.FC<{ eras: Era[]; value: string; onChange: (v: string) => void }> = ({ eras, value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const closeOnEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', closeOnEsc);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', closeOnEsc);
+    };
+  }, [open]);
+
+  return (
+    <div className="era-dropdown" ref={ref}>
+      <button
+        type="button"
+        className={`era-dropdown-trigger${open ? ' open' : ''}`}
+        onClick={() => setOpen(o => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span>{value || 'All eras'}</span>
+        <ChevronDown size={13} className={`era-dropdown-chevron${open ? ' flipped' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="era-dropdown-panel custom-scroll" role="listbox">
+          <button
+            type="button"
+            role="option"
+            aria-selected={!value}
+            className={`era-dropdown-item${!value ? ' active' : ''}`}
+            onClick={() => { onChange(''); setOpen(false); }}
+          >
+            All eras
+          </button>
+          {eras.map(era => (
+            <button
+              key={era.id}
+              type="button"
+              role="option"
+              aria-selected={value === era.name}
+              className={`era-dropdown-item${value === era.name ? ' active' : ''}`}
+              onClick={() => { onChange(era.name); setOpen(false); }}
+            >
+              {era.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
   const dispatch = useAppDispatch();
@@ -27,15 +88,8 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
     { page: currentPage, page_size: PAGE_SIZE, category: category || undefined, era: era || undefined }
   );
 
-  const handleCategoryChange = (next: string) => {
-    setCategory(next);
-    setCurrentPage(1);
-  };
-
-  const handleEraChange = (next: string) => {
-    setEra(next);
-    setCurrentPage(1);
-  };
+  const handleCategoryChange = (next: string) => { setCategory(next); setCurrentPage(1); };
+  const handleEraChange = (next: string) => { setEra(next); setCurrentPage(1); };
 
   const songs = data?.results || [];
   const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 1;
@@ -44,22 +98,18 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
 
   const playSongs = (shuffle = false) => {
     if (!songs.length) return;
-    const queueSongs = shuffle ? [...songs].sort(() => Math.random() - 0.5) : songs;
-    dispatch(playTrack({
-      track: { song: queueSongs[0] },
-      queue: queueSongs.map(song => ({ song })),
-    }));
+    const queue = shuffle ? [...songs].sort(() => Math.random() - 0.5) : songs;
+    dispatch(playTrack({ track: { song: queue[0] }, queue: queue.map(song => ({ song })) }));
   };
 
   return (
     <div className="library-page">
-      <div className="browse-header">
+      <div className="songs-page-header">
         <div>
-          <div className="section-label">Library</div>
           <h1>Songs</h1>
           <p>{totalCount ? `${totalCount.toLocaleString()} tracks` : 'Every track in the archive.'}</p>
         </div>
-        <div className="playlist-actions">
+        <div className="songs-page-actions">
           <button onClick={() => playSongs(false)} disabled={!songs.length} className="btn btn-primary">
             <Play size={15} fill="currentColor" /> Play
           </button>
@@ -69,23 +119,14 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
         </div>
       </div>
 
-      <div className="songs-filters">
+      <div className="songs-filter-bar">
         <CategoryTabs activeTab={category} onTabChange={handleCategoryChange} />
-        <select
-          className="songs-era-select"
-          value={era}
-          onChange={e => handleEraChange(e.target.value)}
-        >
-          <option value="">All eras</option>
-          {eras.map(e => (
-            <option key={e.id} value={e.name}>{e.name}</option>
-          ))}
-        </select>
+        <EraDropdown eras={eras} value={era} onChange={handleEraChange} />
       </div>
 
       {loading ? (
         <div className="track-list-card">
-          {Array.from({ length: PAGE_SIZE }, (_, index) => <RowSkeleton key={index} />)}
+          {Array.from({ length: PAGE_SIZE }, (_, i) => <RowSkeleton key={i} />)}
         </div>
       ) : songs.length > 0 ? (
         <div className="track-list-card">
@@ -115,11 +156,11 @@ export const Songs: React.FC<SongsProps> = ({ onOpenAuth }) => {
 
       {totalCount > PAGE_SIZE && (
         <div className="pagination-controls">
-          <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} className="btn btn-secondary">
+          <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} className="btn btn-secondary">
             <ArrowLeft size={15} /> Prev
           </button>
           <span>Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong></span>
-          <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} className="btn btn-secondary">
+          <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} className="btn btn-secondary">
             Next <ArrowRight size={15} />
           </button>
         </div>
