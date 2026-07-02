@@ -694,8 +694,8 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         ) : (
           <div className={`right-player-placeholder ${motionSurface}`}>
             <div className={`right-player-placeholder-art ${motionSoft}`}>DR</div>
-            <strong>No track selected.</strong>
-            <span>Start your session by selecting a track from the vault, or tune into the radio.</span>
+            <strong>Browse the vault to start listening.</strong>
+            <span>Pick a track, fire up the radio, or check out the eras.</span>
           </div>
         )}
       </div>
