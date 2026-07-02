@@ -9,8 +9,6 @@ const CATALOG_PAGE_SIZE = 100;
 
 let playableRadioCache: Song[] | null = null;
 
-const shuffleSongs = (songs: Song[]) => [...songs].sort(() => Math.random() - 0.5);
-
 const uniqueSongsById = (songs: Song[]) => {
   const seen = new Set<number>();
   return songs.filter(song => {
