@@ -113,23 +113,20 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
     : undefined;
   const upcomingTracks = useMemo(() => {
     const queueItems = queue.map((track, index) => ({ track, index }));
-    const songId = song?.id;
 
     if (radioMode) {
       return [
         ...queueItems.slice(currentIndex + 1),
         ...queueItems.slice(0, Math.max(0, currentIndex)),
-      ].filter(({ track, index }) => index !== currentIndex && track.song.id !== songId);
+      ].filter(({ index }) => index !== currentIndex);
     }
 
-    return queueItems
-      .filter(({ track, index }) => index !== currentIndex && track.song.id !== songId)
-      .slice(0, 4);
-  }, [currentIndex, queue, radioMode, song?.id]);
+    return queueItems.filter(({ index }) => index > currentIndex);
+  }, [currentIndex, queue, radioMode]);
   const lyricDisplayLines = useMemo(() => getLyricLinesForSong(song), [song]);
   const lyricsAreSynced = useMemo(() => hasSyncedLyricLines(lyricDisplayLines), [lyricDisplayLines]);
   const stationButtonLabel = isLoadingPool ? 'Building Station' : 'Start Radio';
-  const showRightRail = radioMode && rightRailMode;
+  const showRightRail = rightRailMode !== null;
 
   useEffect(() => {
     let cancelled = false;
@@ -419,19 +416,11 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
       <div
         className={`queue-row group/queue ${motionSoft}`}
         key={`${index}-${track.song.id}-${track.upload?.id || 'api'}`}
-        onClick={() => {
-          if (radioMode) {
-            dispatch(playQueueIndex(index));
-            return;
-          }
-
-          navigate(`/song/${track.song.public_id || track.song.id}`);
-        }}
+        onClick={() => dispatch(playQueueIndex(index))}
         onKeyDown={(event) => {
           if (event.key !== 'Enter' && event.key !== ' ') return;
           event.preventDefault();
-          if (radioMode) dispatch(playQueueIndex(index));
-          else navigate(`/song/${track.song.public_id || track.song.id}`);
+          dispatch(playQueueIndex(index));
         }}
         role="button"
         tabIndex={0}
@@ -569,6 +558,24 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
           <div className="right-player-header">
             <div>
               <div className="right-player-label">Now playing</div>
+            </div>
+            <div className="queue-view-toggle" aria-label="Player side panel">
+              <button
+                type="button"
+                className={rightRailMode === 'queue' ? 'active' : ''}
+                onClick={() => setRightRailMode(rightRailMode === 'queue' ? null : 'queue')}
+                title={rightRailMode === 'queue' ? 'Hide queue' : 'Show queue'}
+              >
+                <ListMusic size={17} />
+              </button>
+              <button
+                type="button"
+                className={rightRailMode === 'lyrics' ? 'active' : ''}
+                onClick={() => setRightRailMode(rightRailMode === 'lyrics' ? null : 'lyrics')}
+                title={rightRailMode === 'lyrics' ? 'Hide lyrics' : 'Show lyrics'}
+              >
+                <MessageSquare size={17} />
+              </button>
             </div>
           </div>
         )}
@@ -726,7 +733,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         </div>
       )}
 
-      {radioMode && rightRailMode && (
+      {rightRailMode && (
       <div className={`queue-card custom-scroll ${motionSurface}${radioMode ? ` ${radioEnter}` : ''}`}>
         <div className="queue-card-header">
           <span>{rightRailMode === 'lyrics' ? 'Lyrics' : 'Up next'}</span>

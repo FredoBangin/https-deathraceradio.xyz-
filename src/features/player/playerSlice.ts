@@ -178,9 +178,15 @@ export const playerSlice = createSlice({
         return;
       }
 
-      const nextIndex = getNextUnplayedIndex(state);
+      let nextIndex = getNextUnplayedIndex(state);
 
-      if (nextIndex === -1) {
+      // When repeat:all and every song has been played, reset and restart
+      if (nextIndex === -1 && state.isRepeat === 'all' && state.queue.length > 0) {
+        state.playedSongIds = state.currentTrack ? [state.currentTrack.song.id] : [];
+        nextIndex = getNextUnplayedIndex(state);
+      }
+
+      if (nextIndex === -1 || typeof nextIndex !== 'number') {
         state.isPlaying = false;
         state.progress = 0;
         return;
