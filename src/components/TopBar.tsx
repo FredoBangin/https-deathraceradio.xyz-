@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, LogOut, Shield, Music, Heart } from './AppIcon';
+import { Search, LogOut, Music, Heart } from './AppIcon';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { logoutUser } from '../features/auth/authSlice';
-import { getDisplayNameFromUser, isSupabaseConfigured } from '../lib/supabase';
+import { getDisplayNameFromUser } from '../lib/supabase';
 import { useGetSongsQuery } from '../services/juicewrldApi';
 import type { Song } from '../types';
 
@@ -115,10 +115,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenAuth }) => {
           <Heart size={18} />
           <span>{likedCount}</span>
         </button>
-
-        {!isSupabaseConfigured && (
-          <div className="demo-mode-pill"><Shield size={10} /> Demo</div>
-        )}
 
         {user ? (
           <div className="topbar-user">

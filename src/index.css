@@ -1952,14 +1952,6 @@ body {
   font-weight: 700;
 }
 
-.demo-mode-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-  font-size: 11px;
-}
-
 .search-suggestions-panel {
   position: absolute;
   top: 58px;
@@ -3461,10 +3453,6 @@ body {
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.035);
-}
-
-.demo-mode-pill {
-  padding: 0 8px;
 }
 
 .notification-center-shell {
@@ -6133,7 +6121,6 @@ body {
   cursor: pointer;
 }
 
-.auth-demo-notice,
 .auth-success,
 .auth-error {
   display: flex;
@@ -6142,12 +6129,6 @@ body {
   border-radius: 8px;
   font-size: 12px;
   line-height: 1.45;
-}
-
-.auth-demo-notice {
-  color: #60a5fa;
-  background: rgba(59,130,246,0.1);
-  border: 1px solid rgba(59,130,246,0.2);
 }
 
 .auth-success {
@@ -7025,10 +7006,6 @@ a,
     gap: 8px;
     margin-left: auto;
     min-width: 0;
-  }
-
-  .demo-mode-pill {
-    display: none;
   }
 
   .topbar-icon-btn,

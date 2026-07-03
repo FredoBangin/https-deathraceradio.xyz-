@@ -6,7 +6,6 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 const AUTH_STORAGE_MODE_KEY = 'dr_auth_storage_mode';
-const DEMO_USER_KEY = 'demo_user';
 
 type AuthStorageMode = 'local' | 'session';
 
@@ -35,7 +34,7 @@ const authStorage = {
 if (!isSupabaseConfigured) {
   console.warn(
     'Supabase environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) are missing. ' +
-    'The application will run in local demo mode, utilizing browser storage for auth, likes, and comments.'
+    'Authentication, likes, and comments are unavailable until Supabase is configured.'
   );
 }
 
@@ -52,24 +51,6 @@ export const supabase = isSupabaseConfigured
 
 export const setAuthRememberMe = (rememberMe: boolean) => {
   localStorage.setItem(AUTH_STORAGE_MODE_KEY, rememberMe ? 'local' : 'session');
-};
-
-export const getDemoUser = (): UserSession | null => {
-  const savedUser = getAuthStorage().getItem(DEMO_USER_KEY);
-  if (!savedUser) return null;
-
-  try {
-    return JSON.parse(savedUser) as UserSession;
-  } catch {
-    return null;
-  }
-};
-
-export const saveDemoUser = (user: UserSession | null) => {
-  localStorage.removeItem(DEMO_USER_KEY);
-  sessionStorage.removeItem(DEMO_USER_KEY);
-  if (!user) return;
-  getAuthStorage().setItem(DEMO_USER_KEY, JSON.stringify(user));
 };
 
 const normalizeUsername = (value: string) =>

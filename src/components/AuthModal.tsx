@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { X, Lock, Mail, User, ShieldAlert } from './AppIcon';
+import { X, Lock, Mail, User } from './AppIcon';
 import { AppCheckbox } from './AppCheckbox';
 import { useAppDispatch } from '../app/hooks';
 import { setUser } from '../features/auth/authSlice';
@@ -79,10 +79,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   };
 
   const finishAuth = async (user: SupabaseUser, name?: string) => {
-    if (isSupabaseConfigured && user) {
-      await upsertProfile(user, name);
-      dispatch(setUser(await toUserSession(user)));
-    }
+    await upsertProfile(user, name);
+    dispatch(setUser(await toUserSession(user)));
     onClose();
   };
 
@@ -97,55 +95,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const safeDisplayName = (displayName || safeEmail.split('@')[0]).trim();
 
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        throw new Error('Authentication is unavailable because Supabase is not configured.');
+      }
+
       if (isSignUp && !passwordReady) {
         throw new Error('Use a stronger password before creating your account.');
       }
 
-      if (isSupabaseConfigured && supabase) {
-        if (isSignUp) {
-          const { data, error } = await supabase.auth.signUp({
-            email: safeEmail,
-            password,
-            options: {
-              data: {
-                display_name: safeDisplayName,
-                username: safeDisplayName,
-              },
-            },
-          });
-          if (error) throw error;
-          if (data.session?.user) {
-            await finishAuth(data.session.user, safeDisplayName);
-          } else if (data.user) {
-            setPassword('');
-            setSuccessMsg('Account created. Check your email to confirm it, then sign in.');
-          }
-        } else {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: safeEmail,
-            password,
-          });
-          if (error) throw error;
-          if (data.user) await finishAuth(data.user);
-        }
-      } else {
-        window.setTimeout(() => {
-          dispatch(setUser({
-            id: crypto.randomUUID(),
-            email: safeEmail,
-            user_metadata: {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email: safeEmail,
+          password,
+          options: {
+            data: {
               display_name: safeDisplayName,
               username: safeDisplayName,
             },
-          }));
-          setLoading(false);
-          onClose();
-        }, 500);
+          },
+        });
+        if (error) throw error;
+        if (data.session?.user) {
+          await finishAuth(data.session.user, safeDisplayName);
+        } else if (data.user) {
+          setPassword('');
+          setSuccessMsg('Account created. Check your email to confirm it, then sign in.');
+        }
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: safeEmail,
+          password,
+        });
+        if (error) throw error;
+        if (data.user) await finishAuth(data.user);
       }
     } catch (err: unknown) {
       setErrorMsg(getFriendlyAuthError(err));
     } finally {
-      if (isSupabaseConfigured) setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -259,13 +246,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           >
             Remember me
           </AppCheckbox>
-
-          {!isSupabaseConfigured && (
-            <div className="auth-demo-notice">
-              <ShieldAlert size={16} />
-              <span>Demo mode is active. Any email and password will sign you in locally.</span>
-            </div>
-          )}
 
           {successMsg && <div className="auth-success">{successMsg}</div>}
           {errorMsg && <div className="auth-error">{errorMsg}</div>}
