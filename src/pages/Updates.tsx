@@ -1,8 +1,12 @@
-import React from 'react';
-import { devUpdateNotifications } from '../data/devUpdates';
+import React from "react";
+import { devUpdateNotifications } from "../data/devUpdates";
 
 const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
 export const Updates: React.FC = () => (
   <div className="static-page">
@@ -13,7 +17,7 @@ export const Updates: React.FC = () => (
 
     <section className="static-section">
       <div className="updates-list">
-        {[...devUpdateNotifications].reverse().map(update => (
+        {devUpdateNotifications.map((update) => (
           <div key={update.id} className="update-entry">
             <div className="update-meta">
               <span className="update-tag">{update.tag}</span>

@@ -107,7 +107,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   const [rightRailMode, setRightRailMode] = useState<RightRailMode>('queue');
   const [radioReadyOnce, setRadioReadyOnce] = useState(false);
   const [radioLoadingProgress, setRadioLoadingProgress] = useState(0);
-  const [radioLoadingElapsedMs, setRadioLoadingElapsedMs] = useState(0);
   const radioLoadingStartedAtRef = useRef<number | null>(null);
 
   const hasAudio = audioUrl !== '' && !loadError;
@@ -145,23 +144,12 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
     (queueSource === 'radio' && Boolean(song) && !hasAudio)
   );
   const stationButtonLabel = isLoadingPool ? 'Loading Station' : 'Retry Station';
-  const showRightRail = radioMode && rightRailMode;
-  const radioLoadingSeconds = Math.floor(radioLoadingElapsedMs / 1000);
-  const radioLoadingStatus = showAudioLoading
-    ? radioLoadingElapsedMs > 6500
-      ? 'Signal found — waiting for the first track buffer.'
-      : 'Locking in the first track.'
-    : radioLoadingElapsedMs > 6500
-      ? 'Still connecting — holding the station open.'
-      : radioLoadingElapsedMs > 2600
-        ? 'Building a playable station queue.'
-        : 'Tuning the station signal.';
+  const showRightRail = radioMode && rightRailMode && !showStationLoadingScreen;
 
   useEffect(() => {
     if (!radioMode) {
       setRadioReadyOnce(false);
       setRadioLoadingProgress(0);
-      setRadioLoadingElapsedMs(0);
       radioLoadingStartedAtRef.current = null;
       return;
     }
@@ -181,7 +169,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
       setRadioLoadingProgress(100);
       const resetTimer = window.setTimeout(() => {
         setRadioLoadingProgress(0);
-        setRadioLoadingElapsedMs(0);
         radioLoadingStartedAtRef.current = null;
       }, 320);
 
@@ -191,7 +178,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
     if (radioLoadingStartedAtRef.current === null) {
       radioLoadingStartedAtRef.current = performance.now();
       setRadioLoadingProgress(6);
-      setRadioLoadingElapsedMs(0);
     }
 
     let progressTimer = 0;
@@ -203,7 +189,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
       const phaseFloor = showAudioLoading ? 72 : stationIsPreparing ? 14 : 58;
       const nextProgress = Math.min(96, Math.max(phaseFloor, elapsedProgress));
 
-      setRadioLoadingElapsedMs(elapsedMs);
       setRadioLoadingProgress(previous => Math.max(previous, nextProgress));
       progressTimer = window.setTimeout(updateProgress, 120);
     };
@@ -629,15 +614,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
 
   const radioLoadingScreen = (
     <div className="radio-loading-screen" role="status" aria-live="polite">
-      <div className="radio-loading-mark" aria-hidden="true">
-        <span>DR</span>
-        <i />
-      </div>
-      <div className="radio-loading-copy">
-        <small>Deathrace Radio</small>
-        <strong>Loading station</strong>
-        <span>{radioLoadingStatus}</span>
-      </div>
+      <strong>Loading...</strong>
       <div className="radio-loading-progress-wrap">
         <div
           className="radio-loading-progress"
@@ -652,10 +629,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
               '--radio-load-progress': `${radioLoadingProgress}%`,
             } as React.CSSProperties}
           />
-        </div>
-        <div className="radio-loading-progress-meta" aria-hidden="true">
-          <span>{Math.round(radioLoadingProgress)}%</span>
-          <span>{radioLoadingSeconds}s</span>
         </div>
       </div>
     </div>
@@ -858,7 +831,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         )}
       </div>
 
-      {radioMode && !rightRailMode && (
+      {radioMode && !rightRailMode && !showStationLoadingScreen && (
         <div className="player-rail-dock" aria-label="Player side panel">
           <button
             type="button"
@@ -877,7 +850,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         </div>
       )}
 
-      {radioMode && rightRailMode && (
+      {radioMode && rightRailMode && !showStationLoadingScreen && (
       <div className={`queue-card custom-scroll ${motionSurface}${radioMode ? ` ${radioEnter}` : ''}`}>
         <div className="queue-card-header">
           <span>{rightRailMode === 'lyrics' ? 'Lyrics' : playableCount ? `Up next (${playableCount})` : 'Up next'}</span>
