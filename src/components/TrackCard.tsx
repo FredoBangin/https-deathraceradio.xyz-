@@ -52,6 +52,7 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
 
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!hasPlayableAudio) return;
     if (isCurrent) {
       if (isPlaying) dispatch(pauseTrack());
       else dispatch(resumeTrack());
@@ -71,16 +72,7 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
 
   return (
     <div
-      role="link"
-      tabIndex={0}
-      aria-label={`Open ${song.name}`}
       onClick={openSong}
-      onKeyDown={(event) => {
-        if (event.currentTarget !== event.target) return;
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        openSong();
-      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
@@ -115,8 +107,8 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
         background: bgColor,
         marginBottom: '12px',
         boxShadow: hovered
-          ? `0 8px 24px rgba(0,0,0,0.6), 0 0 40px ${bgColor.replace('hsl', 'hsla').replace(')', ', 0.4)')}`
-          : '0 4px 16px rgba(0,0,0,0.5)',
+          ? `0 8px 18px rgba(0,0,0,0.42), 0 0 10px ${bgColor.replace('hsl', 'hsla').replace(')', ', 0.14)')}`
+          : '0 4px 12px rgba(0,0,0,0.38)',
         transition: 'box-shadow 0.22s ease',
       }}>
         {displayImage ? (
@@ -125,9 +117,9 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
           <div style={{
             width: '100%', height: '100%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '32px', fontWeight: 800,
+            fontSize: '32px', fontWeight: 700,
             color: 'rgba(255,255,255,0.25)',
-            letterSpacing: '-2px',
+            letterSpacing: 0,
           }}>
             {song.name.slice(0, 2).toUpperCase()}
           </div>
@@ -145,13 +137,17 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
         {(hovered || isCurrentlyPlaying || hasPlayableAudio) && (
           <button
             onClick={handlePlay}
+            disabled={!hasPlayableAudio}
+            aria-label={isCurrentlyPlaying ? `Pause ${song.name}` : `Play ${song.name}`}
+            title={hasPlayableAudio ? `Play ${song.name}` : 'No audio available'}
             style={{
               position: 'absolute', bottom: '10px', right: '10px',
               width: '42px', height: '42px', borderRadius: '50%',
-              background: 'var(--accent)', border: 'none', cursor: 'pointer',
+              background: 'var(--accent)', border: 'none', cursor: hasPlayableAudio ? 'pointer' : 'not-allowed',
+              opacity: hasPlayableAudio ? 1 : 0.55,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#fff',
-              boxShadow: '0 0 20px rgba(255,85,0,0.7), 0 4px 12px rgba(0,0,0,0.4)',
+              boxShadow: '0 6px 14px rgba(var(--accent-rgb),0.24), 0 3px 10px rgba(0,0,0,0.32)',
               transition: 'transform 0.12s ease',
               animation: isCurrentlyPlaying ? 'glowPulse 2s infinite' : 'none',
             }}
@@ -169,6 +165,8 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
         {(hovered || isLiked) && (
           <button
             onClick={handleLike}
+            aria-label={isLiked ? `Remove ${song.name} from liked tracks` : `Like ${song.name}`}
+            title={isLiked ? 'Remove from liked tracks' : 'Like track'}
             style={{
               position: 'absolute', top: '8px', right: '8px',
               background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)',
@@ -176,11 +174,11 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
               borderRadius: '50%', width: '28px', height: '28px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer',
-              color: isLiked ? '#ff4d6d' : 'rgba(255,255,255,0.7)',
+              color: isLiked ? 'var(--accent-liked)' : 'rgba(255,255,255,0.7)',
               transition: 'all 0.12s ease',
             }}
           >
-            <Heart size={13} fill={isLiked ? '#ff4d6d' : 'none'} />
+            <Heart size={13} fill={isLiked ? 'var(--accent-liked)' : 'none'} />
           </button>
         )}
 
@@ -194,7 +192,7 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
               <div key={i} style={{
                 width: '3px', background: 'var(--accent)',
                 borderRadius: '2px',
-                boxShadow: '0 0 6px rgba(255,85,0,0.8)',
+                boxShadow: '0 0 3px rgba(var(--accent-rgb),0.32)',
                 animation: `waveBar 0.8s ease-in-out ${delay}s infinite`,
               }} />
             ))}
@@ -204,15 +202,32 @@ export const TrackCard: React.FC<TrackCardProps> = ({ song, onOpenAuth, queue })
 
       {/* Info */}
       <div>
-        <div style={{
-          fontSize: '13px', fontWeight: 600,
-          color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          marginBottom: '4px',
-          textShadow: isCurrent ? '0 0 12px rgba(255,85,0,0.4)' : 'none',
-        }} title={song.name}>
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            openSong();
+          }}
+          aria-label={`Open ${song.name}`}
+          style={{
+            display: 'block',
+            width: '100%',
+            background: 'none',
+            border: 0,
+            padding: 0,
+            margin: '0 0 4px',
+            textAlign: 'left',
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: '13px', fontWeight: 600,
+            color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            textShadow: 'none',
+          }}
+          title={song.name}
+        >
           {song.name}
-        </div>
+        </button>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
             {song.era?.name || 'Unknown Era'}

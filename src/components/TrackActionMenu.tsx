@@ -220,6 +220,7 @@ export const TrackActionMenu: React.FC<TrackActionMenuProps> = ({
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={`More actions for ${song.name}`}
         title="More"
       >
         <MoreHorizontal size={17} />

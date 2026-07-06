@@ -444,7 +444,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
         />
       </div>
     );
-  }), [dispatch, navigate, onOpenAuth, radioMode, upcomingTracks]);
+  }), [dispatch, onOpenAuth, upcomingTracks]);
 
   useEffect(() => {
     if (rightRailMode !== 'lyrics' || !lyricsAreSynced || activeLyricLineIndex < 0) return;

@@ -14,13 +14,15 @@ const TABS = [
 ];
 
 export const CategoryTabs: React.FC<CategoryTabsProps> = ({ activeTab, onTabChange }) => (
-  <div className="category-tabs">
+  <div className="category-tabs" role="tablist" aria-label="Track categories">
     {TABS.map(tab => (
       <button
         key={tab.value}
         className={`category-tab${activeTab === tab.value ? ' active' : ''}`}
         onClick={() => onTabChange(tab.value)}
         type="button"
+        role="tab"
+        aria-selected={activeTab === tab.value}
       >
         {tab.label}
       </button>

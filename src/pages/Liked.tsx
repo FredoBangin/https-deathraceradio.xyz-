@@ -37,7 +37,7 @@ export const Liked: React.FC<LikedProps> = ({ onOpenAuth }) => {
   return (
     <div>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <Heart size={22} fill="#ff4d6d" style={{ color: '#ff4d6d', flexShrink: 0, filter: 'drop-shadow(0 0 8px rgba(255,77,109,0.5))' }} />
+        <Heart size={22} fill="var(--accent-liked)" style={{ color: 'var(--accent-liked)', flexShrink: 0, filter: 'drop-shadow(0 0 4px rgba(var(--accent-rgb),0.18))' }} />
         <div>
           <h1 className="page-title" style={{ margin: 0 }}>Liked Tracks</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '2px' }}>

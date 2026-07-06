@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Search } from '../components/AppIcon';
+import { ChevronDown, Grid2X2, ListMusic, Play, Search } from '../components/AppIcon';
 import type { Era } from '../types';
 import { useGetErasQuery, useGetSongsQuery } from '../services/juicewrldApi';
 import { useAppDispatch } from '../app/hooks';
@@ -87,11 +87,67 @@ const TimelineEraCard: React.FC<{ era: Era; side: 'left' | 'right' }> = ({ era, 
 };
 
 type ViewMode = 'timeline' | 'grid';
+type SortMode = 'date' | 'plays' | 'name';
+
+const SORT_OPTIONS: Array<{ value: SortMode; label: string }> = [
+  { value: 'date', label: 'Chronological' },
+  { value: 'plays', label: 'Most played' },
+  { value: 'name', label: 'A to Z' },
+];
+
+const SortDropdown: React.FC<{ value: SortMode; onChange: (value: SortMode) => void }> = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const activeOption = SORT_OPTIONS.find(option => option.value === value) || SORT_OPTIONS[0];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="app-dropdown vault-sort-dropdown" ref={ref}>
+      <button
+        type="button"
+        className={`app-dropdown-trigger${open ? ' open' : ''}`}
+        onClick={() => setOpen(current => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        {activeOption.label}
+        <ChevronDown size={13} className={`app-dropdown-chevron${open ? ' flipped' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="app-dropdown-panel custom-scroll" role="listbox">
+          {SORT_OPTIONS.map(option => (
+            <button
+              key={option.value}
+              type="button"
+              role="option"
+              aria-selected={value === option.value}
+              className={`app-dropdown-item${value === option.value ? ' active' : ''}`}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Eras: React.FC = () => {
   const { data, isLoading } = useGetErasQuery({ page_size: 50 });
   const [query, setQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'date' | 'plays' | 'name'>('date');
+  const [sortBy, setSortBy] = useState<SortMode>('date');
   const [view, setView] = useState<ViewMode>('timeline');
 
   const eras = useMemo(() => {
@@ -118,24 +174,13 @@ export const Eras: React.FC = () => {
             <Search size={15} />
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Filter eras" />
           </label>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}>
-            <option value="date">Chronological</option>
-            <option value="plays">Most played</option>
-            <option value="name">A to Z</option>
-          </select>
+          <SortDropdown value={sortBy} onChange={setSortBy} />
           <div className="view-toggle">
-            <button className={view === 'timeline' ? 'active' : ''} onClick={() => setView('timeline')} title="Timeline">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-                <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
-                <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-              </svg>
+            <button type="button" className={view === 'timeline' ? 'active' : ''} onClick={() => setView('timeline')} title="Timeline" aria-label="Timeline view">
+              <ListMusic size={15} />
             </button>
-            <button className={view === 'grid' ? 'active' : ''} onClick={() => setView('grid')} title="Grid">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-              </svg>
+            <button type="button" className={view === 'grid' ? 'active' : ''} onClick={() => setView('grid')} title="Grid" aria-label="Grid view">
+              <Grid2X2 size={15} />
             </button>
           </div>
         </div>

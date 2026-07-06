@@ -14,6 +14,7 @@ dist-ssr
 .env
 .superpowers/
 .codex-*.png
+design-audit/*.png
 .history/
 .agents/
 skills-lock.json

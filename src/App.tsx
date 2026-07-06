@@ -28,6 +28,21 @@ const Terms = lazy(() => import('./pages/Terms').then(module => ({ default: modu
 const DMCA = lazy(() => import('./pages/DMCA').then(module => ({ default: module.DMCA })));
 const Playlists = lazy(() => import('./pages/Playlists').then(module => ({ default: module.Playlists })));
 
+const RouteLoading = () => (
+  <div className="route-loading" role="status" aria-live="polite" aria-label="Loading page">
+    <div className="route-loading-hero">
+      <div className="route-loading-line route-loading-eyebrow" />
+      <div className="route-loading-line route-loading-title" />
+      <div className="route-loading-line route-loading-title short" />
+      <div className="route-loading-line route-loading-copy" />
+      <div className="route-loading-line route-loading-copy short" />
+    </div>
+    <div className="route-loading-grid">
+      {Array.from({ length: 6 }, (_, index) => <div key={index} className="route-loading-card" />)}
+    </div>
+  </div>
+);
+
 // Layout Wrapper
 const AppLayout: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
   const location = useLocation();
@@ -44,7 +59,7 @@ const AppLayout: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
       <Sidebar />
       <TopBar onOpenAuth={onOpenAuth} />
       <main className="main-area custom-scroll">
-        <Suspense fallback={<div className="route-loading">Loading</div>}>
+        <Suspense fallback={<RouteLoading />}>
           <Routes>
             <Route path="/" element={<Home onOpenAuth={onOpenAuth} />} />
             <Route path="/radio" element={<RadioPage onOpenAuth={onOpenAuth} />} />

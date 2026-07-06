@@ -60,6 +60,8 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
     dispatch(toggleLike(song.id, user.id));
   };
 
+  const openSong = () => navigate(`/song/${song.public_id || song.id}`);
+
   const getCategoryClass = (cat: string) => {
     switch (cat.toLowerCase()) {
       case 'released': return 'badge-released';
@@ -72,7 +74,7 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
 
   return (
     <div
-      onClick={() => navigate(`/song/${song.public_id || song.id}`)}
+      onClick={openSong}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -80,7 +82,7 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
         padding: '8px 14px', gap: '12px',
         borderRadius: '6px',
         background: hovered ? 'var(--bg-card-hover)' : 'transparent',
-        boxShadow: isCurrent ? 'inset 0 0 0 1px rgba(255,85,0,0.2), inset 0 0 20px rgba(255,85,0,0.04)' : 'none',
+        boxShadow: isCurrent ? 'inset 0 0 0 1px rgba(var(--accent-rgb),0.16)' : 'none',
         cursor: 'pointer', transition: 'all 0.15s ease',
       }}
     >
@@ -89,13 +91,16 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
         {hovered || isCurrentlyPlaying || hasPlayableAudio ? (
           <button
             onClick={handlePlay}
+            disabled={!hasPlayableAudio}
+            aria-label={isCurrentlyPlaying ? `Pause ${song.name}` : `Play ${song.name}`}
             style={{
-              background: 'none', border: 'none', cursor: 'pointer',
+              background: 'none', border: 'none', cursor: hasPlayableAudio ? 'pointer' : 'not-allowed',
+              opacity: hasPlayableAudio ? 1 : 0.55,
               color: hasPlayableAudio ? 'var(--accent)' : 'var(--text-muted)',
               display: 'flex', alignItems: 'center', padding: 0,
-              filter: hasPlayableAudio ? 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' : 'none',
+              filter: hasPlayableAudio ? 'drop-shadow(0 0 3px rgba(var(--accent-rgb),0.28))' : 'none',
             }}
-            title={upload?.audio_url ? 'Community upload' : undefined}
+            title={hasPlayableAudio ? (upload?.audio_url ? 'Play community upload' : `Play ${song.name}`) : 'No audio available'}
           >
             {isCurrentlyPlaying ? <Pause size={15} fill="var(--accent)" /> : <Play size={15} fill="var(--accent)" />}
           </button>
@@ -103,7 +108,7 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
           <span style={{
             fontSize: '12px',
             color: isCurrent ? 'var(--accent)' : 'var(--text-muted)',
-            textShadow: isCurrent ? '0 0 8px rgba(255,85,0,0.5)' : 'none',
+            textShadow: 'none',
           }}>
             {isCurrentlyPlaying ? (
               <span style={{ display: 'flex', alignItems: 'flex-end', gap: '1.5px', height: '14px' }}>
@@ -120,7 +125,7 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
       <div style={{
         width: '38px', height: '38px', borderRadius: '4px',
         overflow: 'hidden', background: bgColor, flexShrink: 0,
-        boxShadow: isCurrent ? `0 0 12px ${bgColor}60` : 'none',
+        boxShadow: isCurrent ? `0 0 6px ${bgColor}38` : 'none',
         transition: 'box-shadow 0.15s ease',
       }}>
         {displayImage ? (
@@ -138,15 +143,32 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
 
       {/* Title & artist */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontSize: '13.5px', fontWeight: 500,
-          color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          textShadow: isCurrent ? '0 0 16px rgba(255,85,0,0.35)' : 'none',
-        }}>
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            openSong();
+          }}
+          aria-label={`Open ${song.name}`}
+          title={`Open ${song.name}`}
+          style={{
+            display: 'block',
+            width: '100%',
+            background: 'none',
+            border: 0,
+            padding: 0,
+            margin: 0,
+            textAlign: 'left',
+            cursor: 'pointer',
+            font: 'inherit',
+            fontSize: '13.5px', fontWeight: 500,
+            color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            textShadow: 'none',
+          }}>
           {song.name}
           {upload && <span style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 400, marginLeft: '6px' }}>({upload.notes || 'CDQ'})</span>}
-        </div>
+        </button>
         <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
           {song.credited_artists || 'Juice WRLD'}
         </div>
@@ -173,15 +195,17 @@ export const TrackRow: React.FC<TrackRowProps> = ({ song, index, onOpenAuth, upl
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
         <button
           onClick={handleLike}
+          aria-label={isLiked ? `Remove ${song.name} from liked tracks` : `Like ${song.name}`}
+          title={isLiked ? 'Remove from liked tracks' : 'Like track'}
           style={{
             background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
-            color: isLiked ? '#ff4d6d' : 'var(--text-muted)',
+            color: isLiked ? 'var(--accent-liked)' : 'var(--text-muted)',
             display: hovered || isLiked ? 'flex' : 'none', alignItems: 'center',
-            filter: isLiked ? 'drop-shadow(0 0 6px rgba(255,77,109,0.5))' : 'none',
+            filter: isLiked ? 'drop-shadow(0 0 3px rgba(var(--accent-rgb),0.22))' : 'none',
             transition: 'all 0.12s ease',
           }}
         >
-          <Heart size={14} fill={isLiked ? '#ff4d6d' : 'none'} />
+          <Heart size={14} fill={isLiked ? 'var(--accent-liked)' : 'none'} />
         </button>
         {upload && (
           <a

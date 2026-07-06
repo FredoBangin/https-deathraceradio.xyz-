@@ -17,9 +17,9 @@ const heroPhotos = [
     size: 'cover',
     mobilePosition: '56% 26%',
     mobileSize: 'cover',
-    accent: '#ff6a1a',
-    accentRgb: '255,106,26',
-    secondaryRgb: '106,64,255',
+    accent: '#c1272d',
+    accentRgb: '193,39,45',
+    secondaryRgb: '193,39,45',
   },
   {
     url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Juice_WRLD_-_Les_Ardentes_2019.jpg',
@@ -29,9 +29,9 @@ const heroPhotos = [
     size: 'cover',
     mobilePosition: '62% 22%',
     mobileSize: 'cover',
-    accent: '#ff5500',
-    accentRgb: '255,85,0',
-    secondaryRgb: '23,178,170',
+    accent: '#c1272d',
+    accentRgb: '193,39,45',
+    secondaryRgb: '193,39,45',
   },
   {
     url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Juice_Wrld_VMAs.png',
@@ -41,9 +41,9 @@ const heroPhotos = [
     size: 'cover',
     mobilePosition: '56% 20%',
     mobileSize: 'cover',
-    accent: '#ff3d1f',
-    accentRgb: '255,61,31',
-    secondaryRgb: '58,131,255',
+    accent: '#c1272d',
+    accentRgb: '193,39,45',
+    secondaryRgb: '193,39,45',
   },
 ];
 

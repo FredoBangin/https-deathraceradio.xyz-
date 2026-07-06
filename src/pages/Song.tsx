@@ -60,7 +60,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
   if (songError || !song) {
     return (
       <div style={{ padding: '40px 24px', textAlign: 'center' }}>
-        <h2 style={{ color: '#dc2626', marginBottom: '8px' }}>Track Not Found</h2>
+        <h2 style={{ color: 'var(--accent)', marginBottom: '8px' }}>Track Not Found</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
           This track could not be loaded. The ID may be invalid.
         </p>
@@ -129,7 +129,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
             {displayImage ? (
               <img src={displayImage} alt={song.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
-              <span style={{ fontSize: '40px', fontWeight: 800, color: 'rgba(0,0,0,0.2)' }}>JW</span>
+              <span style={{ fontSize: '40px', fontWeight: 700, color: 'rgba(0,0,0,0.2)' }}>JW</span>
             )}
           </div>
 
@@ -150,12 +150,12 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
                 className="btn btn-secondary"
                 style={{
                   justifyContent: 'center',
-                  color: isLiked ? '#ff4d6d' : undefined,
-                  borderColor: isLiked ? '#ff4d6d' : undefined,
-                  boxShadow: isLiked ? '0 0 12px rgba(255,77,109,0.3)' : 'none',
+                  color: isLiked ? 'var(--accent-liked)' : undefined,
+                  borderColor: isLiked ? 'var(--accent-liked)' : undefined,
+                  boxShadow: isLiked ? '0 0 6px rgba(var(--accent-rgb),0.14)' : 'none',
                 }}
               >
-                <Heart size={14} fill={isLiked ? '#ff4d6d' : 'none'} />
+                <Heart size={14} fill={isLiked ? 'var(--accent-liked)' : 'none'} />
                 {isLiked ? 'Liked' : 'Like'}
               </button>
               <button
@@ -197,7 +197,7 @@ export const SongPage: React.FC<SongPageProps> = ({ onOpenAuth }) => {
             <div style={{
               padding: '12px 16px',
               background: 'var(--accent-light)',
-              border: '1px solid rgba(255,85,0,0.2)',
+              border: '1px solid rgba(var(--accent-rgb),0.2)',
               borderRadius: '4px',
               fontSize: '13px',
               color: 'var(--accent)',

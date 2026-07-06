@@ -1,0 +1,504 @@
+{
+  "base": "http://127.0.0.1:5174",
+  "capturedAt": "2026-07-06T13:58:58.990Z",
+  "consoleErrors": [],
+  "pages": {
+    "homeDesktop": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [],
+      "main": {
+        "top": 80,
+        "bottom": 900,
+        "height": 820
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 16,
+        "left": 280,
+        "width": 480,
+        "height": 48
+      }
+    },
+    "homeMobile": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [
+        {
+          "tag": "div",
+          "className": "sidebar-area custom-scroll",
+          "top": 770,
+          "bottom": 834,
+          "height": 64,
+          "zIndex": "900"
+        }
+      ],
+      "main": {
+        "top": 116,
+        "bottom": 746,
+        "height": 630
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 61,
+        "left": 14,
+        "width": 362,
+        "height": 42
+      }
+    },
+    "songsMobile": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [
+        {
+          "tag": "div",
+          "className": "sidebar-area custom-scroll",
+          "top": 770,
+          "bottom": 834,
+          "height": 64,
+          "zIndex": "900"
+        }
+      ],
+      "main": {
+        "top": 116,
+        "bottom": 746,
+        "height": 630
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 61,
+        "left": 14,
+        "width": 362,
+        "height": 42
+      }
+    },
+    "playlistsMobile": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [
+        {
+          "tag": "div",
+          "className": "sidebar-area custom-scroll",
+          "top": 770,
+          "bottom": 834,
+          "height": 64,
+          "zIndex": "900"
+        }
+      ],
+      "main": {
+        "top": 116,
+        "bottom": 746,
+        "height": 630
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 61,
+        "left": 14,
+        "width": 362,
+        "height": 42
+      }
+    },
+    "radioMobile": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [
+        {
+          "tag": "div",
+          "className": "sidebar-area custom-scroll",
+          "top": 770,
+          "bottom": 834,
+          "height": 64,
+          "zIndex": "900"
+        }
+      ],
+      "main": {
+        "top": 0,
+        "bottom": 0,
+        "height": 0
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 0,
+        "left": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    "searchMobile": {
+      "title": "Death Race Radio - Juice WRLD Archive",
+      "meta": {
+        "description": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "themeColor": "#0a0a0a",
+        "ogTitle": "Death Race Radio - Juice WRLD Archive",
+        "ogDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "ogImage": "https://deathraceradio.xyz/og-image.png",
+        "ogUrl": "https://deathraceradio.xyz/",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "Death Race Radio - Juice WRLD Archive",
+        "twitterDescription": "Browse and stream the Juice WRLD catalog: released albums, unreleased tracks, unsurfaced recordings, eras, lyrics, favorites, and radio mode.",
+        "twitterImage": "https://deathraceradio.xyz/og-image.png"
+      },
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://deathraceradio.xyz/",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.ico",
+          "sizes": "any",
+          "type": null
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon.svg",
+          "sizes": null,
+          "type": "image/svg+xml"
+        },
+        {
+          "rel": "icon",
+          "href": "/favicon-32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "href": "/apple-touch-icon.png",
+          "sizes": null,
+          "type": null
+        },
+        {
+          "rel": "manifest",
+          "href": "/manifest.json",
+          "sizes": null,
+          "type": null
+        }
+      ],
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflowX": 0,
+      "unlabeledButtonCount": 0,
+      "unlabeledButtons": [],
+      "nestedInteractiveCount": 0,
+      "nestedInteractive": [],
+      "fixed": [
+        {
+          "tag": "div",
+          "className": "sidebar-area custom-scroll",
+          "top": 770,
+          "bottom": 834,
+          "height": 64,
+          "zIndex": "900"
+        }
+      ],
+      "main": {
+        "top": 116,
+        "bottom": 746,
+        "height": 630
+      },
+      "search": {
+        "placeholder": "Search tracks, eras, artists...",
+        "top": 61,
+        "left": 14,
+        "width": 362,
+        "height": 42
+      },
+      "hasSearchInput": true,
+      "suggestionText": true
+    }
+  }
+}

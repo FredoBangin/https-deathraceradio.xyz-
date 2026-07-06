@@ -40,7 +40,7 @@ export const EraFilter: React.FC<EraFilterProps> = ({ selectedEra, onEraChange }
           cursor: 'pointer',
           transition: 'all 0.18s ease',
           whiteSpace: 'nowrap',
-          boxShadow: selectedEra === '' ? '0 0 12px rgba(255,85,0,0.45)' : 'none',
+          boxShadow: selectedEra === '' ? '0 0 6px rgba(var(--accent-rgb),0.18)' : 'none',
         }}
       >
         All Eras
@@ -62,7 +62,7 @@ export const EraFilter: React.FC<EraFilterProps> = ({ selectedEra, onEraChange }
             cursor: 'pointer',
             transition: 'all 0.18s ease',
             whiteSpace: 'nowrap',
-            boxShadow: selectedEra === era.name ? '0 0 12px rgba(255,85,0,0.45)' : 'none',
+            boxShadow: selectedEra === era.name ? '0 0 6px rgba(var(--accent-rgb),0.18)' : 'none',
           }}
           title={era.description || era.name}
         >

@@ -19,28 +19,28 @@ const PLAYLISTS: Playlist[] = [
     id: 'top-unreleased',
     name: 'Top Unreleased',
     description: 'The most-played unreleased tracks in the archive.',
-    accent: '#c1272d',
+    accent: '193,39,45',
     params: { category: 'unreleased' },
   },
   {
     id: 'official-releases',
     name: 'Official Releases',
     description: 'Every officially released Juice WRLD track in the archive.',
-    accent: '#7c3aed',
+    accent: '193,39,45',
     params: { category: 'released' },
   },
   {
     id: 'recording-sessions',
     name: 'Session Recordings',
     description: 'Raw studio sessions, freestyles, and voice memo recordings.',
-    accent: '#0891b2',
+    accent: '193,39,45',
     params: { category: 'recording_session' },
   },
   {
     id: 'unsurfaced',
     name: 'Unsurfaced',
     description: 'Known to exist but no audio has circulated yet.',
-    accent: '#6b7280',
+    accent: '193,39,45',
     params: { category: 'unsurfaced' },
   },
 ];
@@ -53,12 +53,13 @@ const buildBrowseUrl = (params: Playlist['params']) => {
   return `/browse?${query.toString()}`;
 };
 
-const PlaylistCard: React.FC<{ playlist: Playlist; onOpenAuth: () => void }> = ({ playlist, onOpenAuth: _onOpenAuth }) => {
+const PlaylistCard: React.FC<{ playlist: Playlist }> = ({ playlist }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { data } = useGetSongsQuery({ ...playlist.params, page_size: 4 });
   const preview = data?.results?.slice(0, 4) || [];
   const total = data?.count;
+  const openPlaylist = () => navigate(buildBrowseUrl(playlist.params));
 
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,10 +69,10 @@ const PlaylistCard: React.FC<{ playlist: Playlist; onOpenAuth: () => void }> = (
   };
 
   return (
-    <button
+    <div
       className="playlist-card"
       style={{ '--playlist-accent': playlist.accent } as React.CSSProperties}
-      onClick={() => navigate(buildBrowseUrl(playlist.params))}
+      onClick={openPlaylist}
     >
       <div className="playlist-card-art">
         {preview.length > 0 ? (
@@ -91,16 +92,33 @@ const PlaylistCard: React.FC<{ playlist: Playlist; onOpenAuth: () => void }> = (
         ) : (
           <div className="playlist-card-art-placeholder" />
         )}
-        <button className="playlist-card-play" onClick={handlePlay} title="Play playlist">
+        <button
+          type="button"
+          className="playlist-card-play"
+          onClick={handlePlay}
+          disabled={!data?.results?.length}
+          aria-label={`Play ${playlist.name}`}
+          title="Play playlist"
+        >
           <Play size={18} fill="currentColor" />
         </button>
       </div>
       <div className="playlist-card-info">
-        <strong>{playlist.name}</strong>
+        <button
+          type="button"
+          className="playlist-card-title"
+          onClick={(event) => {
+            event.stopPropagation();
+            openPlaylist();
+          }}
+          aria-label={`Open ${playlist.name}`}
+        >
+          {playlist.name}
+        </button>
         <span>{playlist.description}</span>
         {total !== undefined && <small>{total.toLocaleString()} tracks</small>}
       </div>
-    </button>
+    </div>
   );
 };
 
@@ -108,7 +126,7 @@ interface PlaylistsProps {
   onOpenAuth: () => void;
 }
 
-export const Playlists: React.FC<PlaylistsProps> = ({ onOpenAuth }) => (
+export const Playlists: React.FC<PlaylistsProps> = () => (
   <div className="library-page">
     <div className="browse-header">
       <div>
@@ -120,7 +138,7 @@ export const Playlists: React.FC<PlaylistsProps> = ({ onOpenAuth }) => (
 
     <div className="playlists-grid">
       {PLAYLISTS.map(playlist => (
-        <PlaylistCard key={playlist.id} playlist={playlist} onOpenAuth={onOpenAuth} />
+        <PlaylistCard key={playlist.id} playlist={playlist} />
       ))}
     </div>
   </div>
