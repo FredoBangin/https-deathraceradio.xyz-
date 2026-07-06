@@ -7,6 +7,8 @@ export interface PlayerTrack {
   upload?: Upload; // If playing a community upload version, otherwise preview mode
 }
 
+type QueueSource = 'user' | 'radio';
+
 interface PlayerSeekRequest {
   id: number;
   songId?: number;
@@ -21,6 +23,7 @@ interface PlayerState {
   progress: number;
   duration: number;
   queue: PlayerTrack[];
+  queueSource: QueueSource | null;
   originalQueue: PlayerTrack[]; // unshuffled order, stored while shuffle is on
   currentIndex: number;
   playedIndexHistory: number[];
@@ -84,6 +87,7 @@ const initialState: PlayerState = {
   progress: 0,
   duration: 0,
   queue: [],
+  queueSource: null,
   originalQueue: [],
   currentIndex: -1,
   playedIndexHistory: [],
@@ -98,7 +102,7 @@ export const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
-    playTrack: (state, action: PayloadAction<{ track: PlayerTrack; queue?: PlayerTrack[] }>) => {
+    playTrack: (state, action: PayloadAction<{ track: PlayerTrack; queue?: PlayerTrack[]; source?: QueueSource }>) => {
       state.currentTrack = action.payload.track;
       state.isPlaying = true;
       state.progress = 0;
@@ -114,6 +118,7 @@ export const playerSlice = createSlice({
                t.upload?.id === action.payload.track.upload?.id
         ));
         state.queue = incoming;
+        state.queueSource = action.payload.source || 'user';
         state.currentIndex = startIdx;
         if (state.isShuffle) applyShuffle(state);
       } else {
@@ -125,9 +130,33 @@ export const playerSlice = createSlice({
           state.currentIndex = indexInQueue;
         } else {
           state.queue = [action.payload.track];
+          state.queueSource = action.payload.source || 'user';
           state.currentIndex = 0;
         }
       }
+    },
+    loadQueue: (state, action: PayloadAction<{ queue: PlayerTrack[]; startIndex?: number; autoplay?: boolean; source?: QueueSource }>) => {
+      const incoming = action.payload.queue;
+      if (!incoming.length) return;
+
+      const startIndex = Math.min(
+        incoming.length - 1,
+        Math.max(0, action.payload.startIndex || 0)
+      );
+
+      state.queue = incoming;
+      state.queueSource = action.payload.source || 'user';
+      state.currentIndex = startIndex;
+      state.currentTrack = incoming[startIndex];
+      state.progress = 0;
+      state.duration = 0;
+      state.playedIndexHistory = [];
+      state.playedSongIds = [];
+      state.originalQueue = [];
+      state.isPlaying = Boolean(action.payload.autoplay);
+
+      if (state.isShuffle) applyShuffle(state);
+      if (state.isPlaying && state.currentTrack) rememberPlayedTrack(state, state.currentTrack);
     },
     pauseTrack: (state) => {
       state.isPlaying = false;
@@ -135,6 +164,7 @@ export const playerSlice = createSlice({
     resumeTrack: (state) => {
       if (state.currentTrack) {
         state.isPlaying = true;
+        rememberPlayedTrack(state, state.currentTrack);
       }
     },
     setVolume: (state, action: PayloadAction<number>) => {
@@ -249,6 +279,7 @@ export const playerSlice = createSlice({
 
       if (!state.currentTrack) {
         state.queue = [track];
+        state.queueSource = 'user';
         state.currentTrack = track;
         state.currentIndex = 0;
         state.progress = 0;
@@ -266,6 +297,7 @@ export const playerSlice = createSlice({
       }
 
       state.queue.splice(state.currentIndex + 1, 0, track);
+      state.queueSource = 'user';
     },
     playLater: (state, action: PayloadAction<PlayerTrack>) => {
       const track = action.payload;
@@ -278,6 +310,7 @@ export const playerSlice = createSlice({
       }
 
       state.queue.push(track);
+      state.queueSource = 'user';
       if (!state.currentTrack) {
         state.currentTrack = track;
         state.currentIndex = 0;
@@ -292,6 +325,7 @@ export const playerSlice = createSlice({
         if (!state.queue.length) {
           state.currentTrack = null;
           state.currentIndex = -1;
+          state.queueSource = null;
           state.progress = 0;
           state.isPlaying = false;
           state.playedIndexHistory = [];
@@ -336,6 +370,7 @@ export const playerSlice = createSlice({
       );
       if (!exists) {
         state.queue.push(action.payload);
+        state.queueSource = 'user';
         if (state.currentIndex === -1) {
           state.currentIndex = 0;
           state.currentTrack = action.payload;
@@ -344,6 +379,7 @@ export const playerSlice = createSlice({
     },
     clearQueue: (state) => {
       state.queue = [];
+      state.queueSource = null;
       state.currentIndex = -1;
       state.playedIndexHistory = [];
       state.playedSongIds = [];
@@ -356,6 +392,7 @@ export const playerSlice = createSlice({
 
 export const {
   playTrack,
+  loadQueue,
   pauseTrack,
   resumeTrack,
   setVolume,
