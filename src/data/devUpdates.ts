@@ -9,8 +9,8 @@ export type DevUpdateNotification = {
 export const devUpdateNotifications: DevUpdateNotification[] = [
   {
     id: "dev-radio-loading-screen",
-    title: "Radio loading screen",
-    body: "Radio now shows a clearer Loading... bar while the station and first track prepare, and hides the queue/list rail until playback is ready.",
+    title: "Radio loading animation",
+    body: "Radio now uses a Uiverse-inspired Loading... animation while the station and first track prepare, and hides the queue/list rail until playback is ready.",
     tag: "Radio update",
     date: "2026-07-06",
   },

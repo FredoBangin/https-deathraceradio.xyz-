@@ -106,8 +106,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   const [audioSource, setAudioSource] = useState<AudioSource>('none');
   const [rightRailMode, setRightRailMode] = useState<RightRailMode>('queue');
   const [radioReadyOnce, setRadioReadyOnce] = useState(false);
-  const [radioLoadingProgress, setRadioLoadingProgress] = useState(0);
-  const radioLoadingStartedAtRef = useRef<number | null>(null);
 
   const hasAudio = audioUrl !== '' && !loadError;
   const song = currentTrack?.song;
@@ -149,8 +147,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   useEffect(() => {
     if (!radioMode) {
       setRadioReadyOnce(false);
-      setRadioLoadingProgress(0);
-      radioLoadingStartedAtRef.current = null;
       return;
     }
 
@@ -161,42 +157,6 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
     if (!radioMode || queueSource !== 'radio' || !song || !hasAudio || showAudioLoading || loadError) return;
     setRadioReadyOnce(true);
   }, [hasAudio, loadError, queueSource, radioMode, showAudioLoading, song]);
-
-  useEffect(() => {
-    if (!showStationLoadingScreen) {
-      if (radioLoadingStartedAtRef.current === null) return;
-
-      setRadioLoadingProgress(100);
-      const resetTimer = window.setTimeout(() => {
-        setRadioLoadingProgress(0);
-        radioLoadingStartedAtRef.current = null;
-      }, 320);
-
-      return () => window.clearTimeout(resetTimer);
-    }
-
-    if (radioLoadingStartedAtRef.current === null) {
-      radioLoadingStartedAtRef.current = performance.now();
-      setRadioLoadingProgress(6);
-    }
-
-    let progressTimer = 0;
-
-    const updateProgress = () => {
-      const startedAt = radioLoadingStartedAtRef.current ?? performance.now();
-      const elapsedMs = performance.now() - startedAt;
-      const elapsedProgress = 6 + (1 - Math.exp(-elapsedMs / 4200)) * 90;
-      const phaseFloor = showAudioLoading ? 72 : stationIsPreparing ? 14 : 58;
-      const nextProgress = Math.min(96, Math.max(phaseFloor, elapsedProgress));
-
-      setRadioLoadingProgress(previous => Math.max(previous, nextProgress));
-      progressTimer = window.setTimeout(updateProgress, 120);
-    };
-
-    updateProgress();
-
-    return () => window.clearTimeout(progressTimer);
-  }, [showAudioLoading, showStationLoadingScreen, stationIsPreparing]);
 
   useEffect(() => {
     let cancelled = false;
@@ -612,25 +572,18 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
     commitVolumeValue(nextVolume, true);
   };
 
+  const radioLoadingText = "Loading...";
   const radioLoadingScreen = (
     <div className="radio-loading-screen" role="status" aria-live="polite">
-      <strong>Loading...</strong>
-      <div className="radio-loading-progress-wrap">
-        <div
-          className="radio-loading-progress"
-          role="progressbar"
-          aria-label="Radio station loading progress"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(radioLoadingProgress)}
-        >
-          <b
-            style={{
-              '--radio-load-progress': `${radioLoadingProgress}%`,
-            } as React.CSSProperties}
-          />
-        </div>
+      <div className="radio-uiverse-loader" aria-hidden="true">
+        {Array.from({ length: 9 }, (_, index) => (
+          <div className="text" key={index}>
+            <span>{radioLoadingText}</span>
+          </div>
+        ))}
+        <div className="line" />
       </div>
+      <span className="radio-loading-sr">{radioLoadingText}</span>
     </div>
   );
 
