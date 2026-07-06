@@ -575,7 +575,7 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ radioMode = false, onOpenA
   const radioLoadingText = "Loading...";
   const radioLoadingScreen = (
     <div className="radio-loading-screen" role="status" aria-live="polite">
-      <div className="radio-uiverse-loader" aria-hidden="true">
+      <div className="loader" aria-hidden="true">
         {Array.from({ length: 9 }, (_, index) => (
           <div className="text" key={index}>
             <span>{radioLoadingText}</span>
