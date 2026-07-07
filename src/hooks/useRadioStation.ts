@@ -64,7 +64,6 @@ export const useRadioStation = (options: RadioStationOptions = {}) => {
   const dispatch = useAppDispatch();
   const queueSource = useAppSelector(state => state.player.queueSource);
   const abortRef = useRef<AbortController | null>(null);
-  const autoLoadRequestedRef = useRef(false);
   const [playableCount, setPlayableCount] = useState(playableRadioCache?.length || 0);
   const [isLoadingPool, setIsLoadingPool] = useState(false);
   const [error, setError] = useState('');
@@ -115,14 +114,10 @@ export const useRadioStation = (options: RadioStationOptions = {}) => {
   }, [queueSongs, queueSource]);
 
   useEffect(() => {
-    if (!options.autoLoad) {
-      autoLoadRequestedRef.current = false;
-      return;
-    }
+    if (!options.autoLoad) return;
 
-    if (queueSource === 'radio' || autoLoadRequestedRef.current) return;
+    if (queueSource === 'radio') return;
 
-    autoLoadRequestedRef.current = true;
     void loadStation(false);
   }, [loadStation, options.autoLoad, queueSource]);
 

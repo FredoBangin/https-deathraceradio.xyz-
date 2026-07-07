@@ -1,0 +1,73 @@
+:root {
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #111111;
+    --bg-card: #161616;
+    --bg-card-hover: #1e1e1e;
+    --bg-input: #111111;
+    --bg-glass: rgba(255, 255, 255, 0.04);
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.18);
+
+    --accent: #c1272d;
+    --accent-hover: #d42d34;
+    --accent-rgb: 193, 39, 45;
+    --accent-hover-rgb: 212, 45, 52;
+    --accent-light: rgba(193, 39, 45, 0.12);
+    --accent-soft: rgba(193, 39, 45, 0.08);
+    --accent-border: rgba(193, 39, 45, 0.28);
+    --accent-liked: var(--accent);
+
+    --glow-accent: 0 0 0 1px rgba(193, 39, 45, 0.2);
+    --glow-sm: 0 2px 8px rgba(0, 0, 0, 0.38);
+    --glow-card: 0 3px 18px rgba(0, 0, 0, 0.36), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    --glow-card-hover: 0 8px 22px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(193, 39, 45, 0.08);
+
+    --text-primary: #ebebeb;
+    --text-secondary: #909090;
+    --text-muted: #555555;
+
+    --sidebar-width: 252px;
+    --right-player-width: 360px;
+    --player-height: 0px;
+    --dashboard-gap: 28px;
+    --dashboard-gap-sm: 16px;
+    --dashboard-radius: 20px;
+    --mobile-nav-height: 78px;
+
+    --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-serif: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --transition: 0.15s ease;
+    --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --motion-fast: 150ms var(--ease-spring);
+    --motion-medium: 280ms var(--ease-spring);
+    --motion-panel: 360ms var(--ease-spring);
+}
+
+body[data-route="radio"],
+.app-container.radio-player-expanded {
+    --right-player-width: auto;
+}
+
+@media (max-width: 1420px) {
+    :root {
+        --sidebar-width: 232px;
+        --right-player-width: 340px;
+        --dashboard-gap: 22px;
+    }
+}
+
+@media (max-width: 1180px) {
+    :root {
+        --right-player-width: 320px;
+        --dashboard-gap: 18px;
+    }
+}
+
+@media (max-width: 760px) {
+    :root {
+        --sidebar-width: 0px;
+        --right-player-width: 0px;
+    }
+}

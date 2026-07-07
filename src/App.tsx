@@ -48,6 +48,20 @@ const AppLayout: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
   const location = useLocation();
   const isRadioRoute = location.pathname === '/radio';
 
+  useEffect(() => {
+    if (isRadioRoute) {
+      document.body.dataset.route = 'radio';
+    } else if (document.body.dataset.route === 'radio') {
+      delete document.body.dataset.route;
+    }
+
+    return () => {
+      if (document.body.dataset.route === 'radio') {
+        delete document.body.dataset.route;
+      }
+    };
+  }, [isRadioRoute]);
+
   // Scroll to top on route change
   useEffect(() => {
     const mainEl = document.querySelector('.main-area');

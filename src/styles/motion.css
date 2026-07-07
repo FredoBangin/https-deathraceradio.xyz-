@@ -1,0 +1,282 @@
+/* ── Inputs ── */
+
+input,
+select,
+textarea {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    padding: 8px 12px;
+    font-size: 13px;
+    transition: var(--transition);
+    outline: none;
+}
+
+
+
+/* ── Buttons ── */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    outline: none;
+    white-space: nowrap;
+}
+
+
+
+/* ── Glow animations ── */
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.25;
+    }
+}
+
+
+@keyframes waveBar {
+    0%,
+    100% {
+        transform: scaleY(0.4);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+}
+
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+@keyframes glowPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 8px rgba(193, 39, 45, 0.12);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(193, 39, 45, 0.22);
+    }
+}
+
+
+
+/* ── Card glow effect ── */
+
+.glow-card {
+    box-shadow: var(--glow-card);
+    transition:
+        box-shadow 0.25s ease,
+        transform 0.2s ease;
+}
+
+
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+
+.site-footer-links a {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.04)
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+    border-radius: 999px;
+    min-height: 10px;
+}
+
+
+
+.hero-api-credit {
+    color: rgba(var(--hero-accent-rgb, 193, 39, 45), 0.88);
+    font-size: 10.5px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    transition: color 160ms ease;
+}
+
+
+
+.hero-photo-credit {
+    display: inline-block;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: inherit;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: fit-content;
+    min-width: 0;
+    transition: color 160ms ease;
+}
+
+
+
+/* Typography polish */
+
+.page-title,
+.songs-page-header h1,
+.browse-vault-hero h1,
+.dr-hero h1,
+.right-player-meta strong,
+.sidebar-brand-text div {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: -0.014em;
+    text-shadow: none;
+}
+
+
+
+@keyframes menuIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+
+@keyframes timedCommentPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 8px rgba(193, 39, 45, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(193, 39, 45, 0.18);
+    }
+}
+
+
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+@keyframes dialogSpringIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0) scale(0.965);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+
+
+@keyframes authPanelIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 6px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+
+
+@keyframes floatingPanelIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -6px, 0) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+
+
+@keyframes surfaceRise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 8px, 0) scale(0.995);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+    }
+}
