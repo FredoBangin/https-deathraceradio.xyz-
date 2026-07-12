@@ -118,7 +118,11 @@ export const useRadioStation = (options: RadioStationOptions = {}) => {
 
     if (queueSource === 'radio') return;
 
-    void loadStation(false);
+    const loadTimeout = window.setTimeout(() => {
+      void loadStation(false);
+    }, 0);
+
+    return () => window.clearTimeout(loadTimeout);
   }, [loadStation, options.autoLoad, queueSource]);
 
   const startRadio = () => loadStation(true, true);
